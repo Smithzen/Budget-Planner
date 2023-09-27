@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budget_Planner.MainPage">
+
+    <ScrollView>
+        <Grid Padding="0, 10 , 10, 0"
+              RowDefinitions="Auto, Auto, Auto"
+              ColumnDefinitions="*,*"
+              BackgroundColor="White">
+            
+            
+            <Label Text="Today's Date: " TextColor="Black" Grid.Row="0" Grid.Column="0" />
+            <Label x:Name="CurrentDateTime" Grid.Row="0" Grid.Column="1" TextColor="Black"/>
+
+
+            <Label Text="Amount Spent" TextColor="Black" Grid.Row="1" Grid.Column="0"></Label>
+            <Border BackgroundColor="White" Grid.Row="1" Grid.Column="1">
+                <Entry Placeholder="Enter Amount" TextColor="Black" Keyboard="Numeric" Grid.Row="1" Grid.Column="1"/>
+            </Border>
+
+            
+            
+
+        </Grid>
+
+    </ScrollView>
+
+</ContentPage>

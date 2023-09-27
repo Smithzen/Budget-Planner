@@ -1,0 +1,27 @@
+﻿namespace Budget_Planner
+{
+    public partial class MainPage : ContentPage
+    {
+        int count = 0;
+
+        public MainPage()
+        {
+            InitializeComponent();
+
+            CurrentDateTime.Text = DateTime.Now.ToString("dd/MM/yyyy");
+        }
+
+        //private void OnCounterClicked(object sender, EventArgs e)
+        //{
+        //    count++;
+
+        //    if (count == 1)
+        //        CounterBtn.Text = $"Clicked {count} time";
+        //    else
+        //        CounterBtn.Text = $"Clicked {count} times";
+
+        //    SemanticScreenReader.Announce(CounterBtn.Text);
+        //}
+
+    }
+}
