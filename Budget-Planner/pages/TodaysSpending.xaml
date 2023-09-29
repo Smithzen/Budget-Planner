@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budget_Planner.MainPage">
+
+    <Grid Padding="0, 10 , 10, 0"
+            RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+            ColumnDefinitions="auto, auto, *, auto"
+            BackgroundColor="White">
+
+
+        <Label x:Name="CurrentDateTime" FontSize="Medium" Padding="20,0,0,0" Grid.Row="0" Grid.Column="0" TextColor="Black"/>
+
+
+        <Label Text="Food: " VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="1" Grid.Column="0"></Label>
+        <Label x:Name="valueFood" Text="£0.00" VerticalTextAlignment="Center" Grid.Row="1" Grid.Column="1"></Label>
+        <Border BackgroundColor="White" Grid.Row="1" Grid.Column="3">
+            <Entry x:Name="foodSpent" Placeholder="Enter Amount" TextColor="Black" Keyboard="Numeric" Grid.Row="1" Grid.Column="1"/>
+        </Border>
+
+
+        <Label x:Name="labelBills" Text="Bills: " VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="2" Grid.Column="0"></Label>
+        <Label x:Name="valueBills" Text="£0.00" VerticalTextAlignment="Center" Grid.Row="2" Grid.Column="1"></Label>
+        <Border BackgroundColor="White" Grid.Row="2" Grid.Column="3">
+            <Entry x:Name="billsSpent" Placeholder="Enter Amount" TextColor="Black" Keyboard="Numeric" Grid.Row="2" Grid.Column="3"/>
+        </Border>
+
+        <Label Text="Recreational: " VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="3" Grid.Column="0"></Label>
+        <Label x:Name="valueRecreational" Text="£0.00" VerticalTextAlignment="Center" Grid.Row="3" Grid.Column="1"></Label>
+        <Border BackgroundColor="White" Grid.Row="3" Grid.Column="3">
+            <Entry x:Name="recreationalSpent" Placeholder="Enter Amount" TextColor="Black" Keyboard="Numeric" Grid.Row="3" Grid.Column="3"/>
+        </Border>
+
+        <Label Text="Other: " VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="4" Grid.Column="0"></Label>
+        <Label x:Name="valueOther" Text="£0.00" VerticalTextAlignment="Center" Grid.Row="4" Grid.Column="1"></Label>
+        <Border BackgroundColor="White" Grid.Row="4" Grid.Column="3">
+            <Entry x:Name="otherSpent" Placeholder="Enter Amount" TextColor="Black" Keyboard="Numeric" Grid.Row="4" Grid.Column="3"/>
+        </Border>
+
+        <Label x:Name="totalSpent" FontSize="Medium" Padding="20,10,10,0" Grid.Row="5" Grid.Column="0"/>
+        <Button x:Name="calculateTotal"
+                Text="Calculate Total"
+                Grid.Row="5"
+                Grid.Column="3"
+                Clicked="CalculateTotalSpent"
+                BackgroundColor="PapayaWhip"/>
+        
+        
+    </Grid>
+
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File">
+        </MenuBarItem>
+        
+        <MenuBarItem Text="Locations">
+        </MenuBarItem>
+        
+        <MenuBarItem Text="View">
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
+</ContentPage>

@@ -4,13 +4,27 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Budget_Planner"
+    xmlns:pages="clr-namespace:Budget_Planner.Pages"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
+    <!--<ShellContent
         Title="Today's Spending"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage"
+        Route="todaysSpending"
         Shell.TitleColor="Black"
-        Shell.BackgroundColor="White" />
+        Shell.BackgroundColor="Coral" />-->
+
+    <TabBar Shell.BackgroundColor="Coral"
+            Shell.TabBarBackgroundColor="Coral">
+        <ShellContent Title="Today's Spending"
+                      ContentTemplate="{DataTemplate local:MainPage}"
+                      Route="TodaysSpending"/>
+
+
+        <ShellContent Title="Statistics"
+                      ContentTemplate="{DataTemplate pages:Statistics}"
+                      Route="statistics"/>
+
+    </TabBar>
 
 </Shell>
