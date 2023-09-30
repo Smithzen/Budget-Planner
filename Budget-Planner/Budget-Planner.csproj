@@ -53,6 +53,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="pages\AddExpense.xaml.cs">
+	    <DependentUpon>AddExpense.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="pages\Statistics.xaml.cs">
 	    <DependentUpon>Statistics.xaml</DependentUpon>
 	  </Compile>

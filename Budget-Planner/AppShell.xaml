@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Budget_Planner"
-    xmlns:pages="clr-namespace:Budget_Planner.Pages"
+    xmlns:pages="clr-namespace:Budget_Planner.pages"
     Shell.FlyoutBehavior="Disabled">
 
     <!--<ShellContent
@@ -26,5 +26,9 @@
                       Route="statistics"/>
 
     </TabBar>
+
+    <!--<ShellContent Title="Add Expenses"
+                  ContentTemplate="{DataTemplate pages:AddExpense}"
+                  Route="AddExpense"/>-->
 
 </Shell>

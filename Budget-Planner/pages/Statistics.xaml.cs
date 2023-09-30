@@ -1,4 +1,4 @@
-namespace Budget_Planner.Pages;
+namespace Budget_Planner.pages;
 
 public partial class Statistics : ContentPage
 {

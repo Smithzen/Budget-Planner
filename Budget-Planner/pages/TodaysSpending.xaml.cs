@@ -1,4 +1,6 @@
-﻿namespace Budget_Planner
+﻿using Budget_Planner.pages;
+
+namespace Budget_Planner
 {
     public partial class MainPage : ContentPage
     {
@@ -24,6 +26,21 @@
 
             _totalSpent = _foodSpent + _billsSpent + _recreationSpent + _otherSpent;
             totalSpent.Text = _totalSpent.ToString("C");
+        }
+
+        public async void AddExpense(object sender, EventArgs e)
+        {
+            //adds back button
+            await Navigation.PushAsync(new AddExpense());
+
+            //no back button so would only be useful if you don't want to go back to another page
+            //await Shell.Current.GoToAsync("//AddExpense");
+
+        }
+
+        public void OnSwiped(object sender, EventArgs e)
+        {
+            Console.WriteLine("Swiped");
         }
 
         //private void OnCounterClicked(object sender, EventArgs e)
