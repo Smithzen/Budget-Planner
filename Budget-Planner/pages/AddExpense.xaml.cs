@@ -5,13 +5,12 @@ namespace Budget_Planner.pages;
 
 public partial class AddExpense : ContentPage
 {
-    string ConnectionString = "server=192.168.1.127;uid=myuser;pwd=mypass;database=budget_planner;";
+    //string ConnectionString = "server=192.168.1.127;uid=myuser;pwd=mypass;database=budget_planner;";
 
 
     public AddExpense()
 	{
         InitializeComponent();
-
     }
 
     public void AddNewExpense(object sender, EventArgs e)
@@ -24,11 +23,14 @@ public partial class AddExpense : ContentPage
             Database = "budget_planner",
         };
 
-        MySqlConnection DBCon = new MySqlConnection(builder.ConnectionString);
-        DBCon.Open();
 
+        MySqlConnection DBCon = new MySqlConnection(builder.ConnectionString);
         try
         {
+            DBCon.Open();
+
+            MySqlCommand cmd;
+            MySqlDataReader reader;
 
         }
         catch (Exception ex)

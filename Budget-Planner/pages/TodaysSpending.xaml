@@ -15,28 +15,28 @@
                 Clicked="AddExpense"/>
 
         <Label x:Name="labelFood" Text="Food: " FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"></Label>
-        <Label x:Name="valueFood" Text="£0.00" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="1" Grid.Column="3"></Label>
+        <Label x:Name="valueFood" Text="£0.00"  FontSize="Medium"  VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="1" Grid.Column="3"></Label>
 
         <Label Text="£" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Grid.Row="1" Grid.Column="2" IsVisible="false"/>
         <Entry x:Name="foodSpent" Placeholder="0.00" TextColor="Black" Keyboard="Numeric" Grid.Row="1" Grid.Column="3" IsVisible="false"/>
 
 
         <Label x:Name="labelBills" Text="Bills: " FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"></Label>
-        <Label x:Name="valueBills" Text="£0.00" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="2" Grid.Column="3"></Label>
+        <Label x:Name="valueBills" Text="£0.00" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="2" Grid.Column="3"></Label>
 
         <Label Text="£" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Grid.Row="2" Grid.Column="2" IsVisible="false"/>
         <Entry x:Name="billsSpent" Placeholder="0.00" TextColor="Black" Keyboard="Numeric" Grid.Row="2" Grid.Column="3" IsVisible="false"/>
 
 
         <Label x:Name="labelRecreation" Text="Recreational: " FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"></Label>
-        <Label x:Name="valueRecreational" Text="£0.00" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="3" Grid.Column="3"></Label>
+        <Label x:Name="valueRecreational" Text="£0.00" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="3" Grid.Column="3"></Label>
 
         <Label Text="£" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Grid.Row="3" Grid.Column="2" IsVisible="false"/>
         <Entry x:Name="recreationalSpent" Placeholder="0.00" TextColor="Black" Keyboard="Numeric" Grid.Row="3" Grid.Column="3" IsVisible="false"/>
 
 
         <Label x:Name="labelOther" Text="Other: " FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"></Label>
-        <Label x:Name="valueOther" Text="£0.00" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="4" Grid.Column="3"></Label>
+        <Label x:Name="valueOther" Text="£0.00" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Row="4" Grid.Column="3"></Label>
 
         <Label Text="£" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Grid.Row="4" Grid.Column="2" IsVisible="false" />
         <Entry x:Name="otherSpent" Placeholder="0.00" TextColor="Black" Keyboard="Numeric" Grid.Row="4" Grid.Column="3" IsVisible="false" />

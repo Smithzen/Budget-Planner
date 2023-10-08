@@ -33,7 +33,9 @@ namespace Budget_Planner
         public async void AddExpense(object sender, EventArgs e)
         {
             //adds back button
-            await Navigation.PushAsync(new AddExpense());
+            AddExpense addExpensePage = new AddExpense();
+            addExpensePage.Title = "Add New Expense";
+            await Navigation.PushAsync(addExpensePage);
 
             //no back button so would only be useful if you don't want to go back to another page
             //await Shell.Current.GoToAsync("//AddExpense");

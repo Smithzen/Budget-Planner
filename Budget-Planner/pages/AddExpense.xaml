@@ -4,7 +4,28 @@
              x:Class="Budget_Planner.pages.AddExpense"
              Title="AddExpense">
 
-    <Button Text="+"
-            Clicked="AddNewExpense"/>
+    <!--<Button Text="+"
+            Clicked="AddNewExpense"
+            IsVisible="false"/>-->
+
+    <Grid Padding="0, 10 , 10, 0"
+          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+          RowSpacing="15"
+          ColumnSpacing="2"
+          ColumnDefinitions="auto, auto, *, auto"
+          BackgroundColor="White">
+
+        <Button Text="Save"
+                Clicked="AddNewExpense"
+                BackgroundColor="Transparent"
+                Grid.Column="3"/>
+
+        <Label Text="Food" />
+
+
+
+
+
+    </Grid>
 
 </ContentPage>
