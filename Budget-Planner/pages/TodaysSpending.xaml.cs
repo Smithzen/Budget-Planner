@@ -1,4 +1,5 @@
 ﻿using Budget_Planner.pages;
+using MySql.Data.MySqlClient;
 
 namespace Budget_Planner
 {
@@ -9,6 +10,7 @@ namespace Budget_Planner
             InitializeComponent();
 
             CurrentDateTime.Text = DateTime.Now.ToString("dd/MM/yyyy");
+
         }
 
         public void CalculateTotalSpent(object sender, EventArgs e)
