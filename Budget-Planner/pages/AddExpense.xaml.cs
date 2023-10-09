@@ -7,7 +7,23 @@ public partial class AddExpense : ContentPage
 {
     //string ConnectionString = "server=192.168.1.127;uid=myuser;pwd=mypass;database=budget_planner;";
 
-    List<string> listTestStrings = new List<string>() { "hello", "Good Morning", "Ay Up" };
+    //    AccountManager manager = (AccountManager)getSystemService(ACCOUNT_SERVICE);
+    //    Account[] list = manager.getAccounts();
+    //    String gmail = null;
+
+    //      for(Account account: list)
+    //      {
+    //          if(account.type.equalsIgnoreCase("com.google"))
+    //          {
+    //              gmail = account.name;
+    //              break;
+    //          }
+    //      }
+    // <uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+    //https://developer.android.com/training/permissions/requesting.html
+
+
+
     public AddExpense()
 	{
         InitializeComponent();
