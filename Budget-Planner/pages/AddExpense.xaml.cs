@@ -7,7 +7,7 @@ public partial class AddExpense : ContentPage
 {
     //string ConnectionString = "server=192.168.1.127;uid=myuser;pwd=mypass;database=budget_planner;";
 
-
+    List<string> listTestStrings = new List<string>() { "hello", "Good Morning", "Ay Up" };
     public AddExpense()
 	{
         InitializeComponent();
