@@ -58,15 +58,21 @@
 	  <Compile Update="pages\AddExpense.xaml.cs">
 	    <DependentUpon>AddExpense.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="pages\TodaysSpending.xaml.cs">
+	    <DependentUpon>TodaysSpending.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="pages\Statistics.xaml.cs">
 	    <DependentUpon>Statistics.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="pages\TodaysSpending.xaml.cs">
-	    <DependentUpon>TodaysSpending.xaml</DependentUpon>
+	  <Compile Update="pages\Login.xaml.cs">
+	    <DependentUpon>Login.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="pages\TodaysSpending.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="pages\Statistics.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

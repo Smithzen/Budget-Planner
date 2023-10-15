@@ -14,10 +14,16 @@
         Shell.TitleColor="Black"
         Shell.BackgroundColor="Coral" />-->
 
+    <ShellContent Title="Login"
+                  ContentTemplate="{DataTemplate local:MainPage}"
+                  Route="Login"
+                  Shell.BackgroundColor="Coral"/>
+
+
     <TabBar Shell.BackgroundColor="Coral"
             Shell.TabBarBackgroundColor="Coral">
         <ShellContent Title="Today's Spending"
-                      ContentTemplate="{DataTemplate local:MainPage}"
+                      ContentTemplate="{DataTemplate pages:TodaysSpending}"
                       Route="TodaysSpending"/>
 
 
