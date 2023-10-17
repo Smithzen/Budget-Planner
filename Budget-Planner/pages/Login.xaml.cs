@@ -1,4 +1,5 @@
 ﻿using Budget_Planner.pages;
+using Budget_Planner.BudgetPlanner;
 using MySql.Data.MySqlClient;
 
 namespace Budget_Planner
@@ -13,7 +14,9 @@ namespace Budget_Planner
 
         public async void Login(object sender, EventArgs e)
         {
-
+            BPApplication bpApplication = new BPApplication();
+            bpApplication.EncryptUserGUID();
+            
             //Login login = new Login();
             await Shell.Current.GoToAsync("//TodaysSpending");
 
