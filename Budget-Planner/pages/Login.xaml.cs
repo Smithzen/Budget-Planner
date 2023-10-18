@@ -16,6 +16,7 @@ namespace Budget_Planner
         {
             BPApplication bpApplication = new BPApplication();
             bpApplication.EncryptUserGUID();
+            bpApplication.WriteUserLoginTokenToDevice();
             
             //Login login = new Login();
             await Shell.Current.GoToAsync("//TodaysSpending");

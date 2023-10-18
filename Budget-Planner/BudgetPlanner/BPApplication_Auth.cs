@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Budget_Planner.BudgetPlanner
 {
     public partial class BPApplication
     {
-        private string UserGUID { get; set; } = string.Empty;
+        public string UserGUID { get; set; } = string.Empty;
+        public string UserLoginToken { get; set; } = string.Empty;
+        private string UserEncryptionKey { get; set; } = string.Empty; //base64 of aes.generatekey() used when creating account
 
         public string tempUserGUID { get; set; } = "9d2afa96-d020-44e9-aa53-ff5753d5f08e";
 
@@ -24,6 +28,29 @@ namespace Budget_Planner.BudgetPlanner
             //check for local json file
 
             //check json for encrypted UserGUID
+
+            return false;
+        }
+
+        public bool AuthCreateAccount(string userEmail, string userPassword)
+        {
+            //check email and password are ok and email has not been used before
+
+            //create userGUID
+
+            //generate aes.key for email and user token encryption
+
+            //encrypt email
+
+            //hash password
+
+            //generate userLoginToken
+
+            //insert all data to sql
+
+            //if insert is successfult write LoginToken and userGUID to local file and encrypt login token
+
+            //return true or false if account creation is successful.
 
             return false;
         }
@@ -41,7 +68,7 @@ namespace Budget_Planner.BudgetPlanner
         }
 
 
-        public void GetUserGUID()
+        public void GetUserLoginToken()
         {
             //encrypting data and decrypting data to be used for emails passwords and user ids
             //user ids to be stored in local json file to be collected when app opens or login/account creation will be requested
@@ -151,5 +178,38 @@ namespace Budget_Planner.BudgetPlanner
 
 
 
+        public async void WriteUserLoginTokenToDevice()
+        {
+            string filePath = Path.Combine(FileSystem.CacheDirectory, "BPData.json");
+            Console.WriteLine(Path.Exists(filePath));
+
+            BPApplication BPAuth = new BPApplication();
+            BPAuth.UserGUID = tempUserGUID;
+            BPAuth.UserLoginToken = tempUserGUID;
+
+            string BPAuthJson = JsonConvert.SerializeObject(BPAuth);
+
+            using (var fileStream = File.Create(filePath))
+            {
+                Console.WriteLine(filePath);
+                using (StreamWriter writer = new StreamWriter(fileStream))
+                {
+                    await writer.WriteAsync(BPAuthJson);
+                }
+            }
+
+            Console.WriteLine(Path.Exists(filePath));
+
+
+        }
+
+        //using (var readStream = File.OpenRead(filePath))
+        //{
+        //    using (StreamReader reader = new StreamReader(readStream))
+        //    {
+        //        string json = reader.ReadToEnd();
+        //        Console.WriteLine(json);
+        //    }
+        //}
     }
 }
