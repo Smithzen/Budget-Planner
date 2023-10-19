@@ -17,6 +17,7 @@ namespace Budget_Planner
             BPApplication bpApplication = new BPApplication();
             bpApplication.EncryptUserGUID();
             bpApplication.WriteUserLoginTokenToDevice();
+            bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
             
             //Login login = new Login();
             await Shell.Current.GoToAsync("//TodaysSpending");

@@ -8,6 +8,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using System.Net.Mail;
+using Windows.Media.AppBroadcasting;
+using MySql.Data.MySqlClient;
 
 namespace Budget_Planner.BudgetPlanner
 {
@@ -16,6 +20,12 @@ namespace Budget_Planner.BudgetPlanner
         public string UserGUID { get; set; } = string.Empty;
         public string UserLoginToken { get; set; } = string.Empty;
         private string UserEncryptionKey { get; set; } = string.Empty; //base64 of aes.generatekey() used when creating account
+        private byte[] EmailEncryptionKey { get; set; } = 
+        {
+            0x04, 0x02, 0x01, 0x04, 0x05, 0x07, 0x07, 0x08,
+            0x09, 0x10, 0x14, 0x12, 0x13, 0x12, 0x15, 0x16
+        };
+
 
         public string tempUserGUID { get; set; } = "9d2afa96-d020-44e9-aa53-ff5753d5f08e";
 
@@ -32,27 +42,118 @@ namespace Budget_Planner.BudgetPlanner
             return false;
         }
 
-        public bool AuthCreateAccount(string userEmail, string userPassword)
+        public bool AuthIsEmailNew(string userEmailEncrypted)
+        {
+            var builder = new MySqlConnectionStringBuilder
+            {
+                Server = "192.168.1.127",
+                UserID = "myuser",
+                Password = "mypass",
+                Database = "budget_planner",
+            };
+
+            List<BPApplication> listBPUsers = new List<BPApplication>();
+            MySqlConnection DBConRO = new MySqlConnection(builder.ConnectionString);
+            try
+            {
+                DBConRO.Open();
+
+                MySqlCommand cmd;
+                MySqlDataReader reader;
+
+                //get all users where that email already exists
+                cmd = new MySqlCommand("SELECT UserGUID FROM bpauth WHERE UserEmail=@UserEmail", DBConRO);
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserEmail", MySqlDbType = MySqlDbType.VarChar, Value = userEmailEncrypted });
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    //add to list to check how many
+                    listBPUsers.Add(new BPApplication()
+                    {
+                        UserGUID = reader["UserGUID"].ToString()
+                    });
+                }
+                reader.Close();
+                reader.Dispose();
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+                Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
+            }
+            finally
+            {
+                DBConRO.Close();
+                DBConRO.Dispose();
+            }
+
+            //check if any users were returned
+            if (listBPUsers.Count > 0)
+            {
+                Debug.WriteLine("AuthIsEmailNew listBPUsers.Count: " + listBPUsers.Count);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public void AuthCreateAccount(string userEmail, string userPassword)
         {
             //check email and password are ok and email has not been used before
+            bool bIsEmailAvailable = false;
 
-            //create userGUID
+            if(AuthIsValidEmail(userEmail))
+            {
+                
+                //create userGUID
+                BPApplication bpApplication = new BPApplication();
+                bpApplication.UserGUID = Guid.NewGuid().ToString();
 
-            //generate aes.key for email and user token encryption
+                //encrypt email
+                string userEmailEncrypted = AuthEncryptString(Convert.ToBase64String(EmailEncryptionKey), userEmail);
 
-            //encrypt email
+                //check if email has been used before
+                bIsEmailAvailable = AuthIsEmailNew(userEmailEncrypted);
 
-            //hash password
+            }
 
-            //generate userLoginToken
+            if (bIsEmailAvailable)
+            {
+                //hash password
 
-            //insert all data to sql
+                //generate userLoginToken
 
-            //if insert is successfult write LoginToken and userGUID to local file and encrypt login token
+                //insert all data to sql
 
-            //return true or false if account creation is successful.
+                //if insert is successfult write LoginToken and encrypted email to local file and encrypt login token
 
-            return false;
+                //return true or false if account creation is successful.
+            }
+
+
+
+        }
+
+        private static bool AuthIsValidEmail(string userEmail)
+        {
+            bool bValidEmail = true;
+            try
+            {
+                MailAddress mail = new MailAddress(userEmail);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
+                bValidEmail = false;
+            }
+
+            return bValidEmail;
         }
 
         public void Backgroundlogin()
@@ -89,6 +190,44 @@ namespace Budget_Planner.BudgetPlanner
 
         }
 
+        public string AuthEncryptString(string UserEncryptionKeyB64, string text)
+        {
+            string textEncrypted = string.Empty;
+
+            try
+            {
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    using (Aes aes = Aes.Create())
+                    {
+                        aes.Key = Convert.FromBase64String(UserEncryptionKey);
+                        byte[] iv = aes.IV;
+                        memoryStream.Write(iv, 0, iv.Length);
+
+                        using (CryptoStream cryptoStream = new(memoryStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            using (StreamWriter writer = new(cryptoStream))
+                            {
+                                writer.WriteLine(text);
+                            }
+                        }
+
+                        textEncrypted = Convert.ToBase64String(memoryStream.ToArray());
+                    }
+                }
+
+                Debug.WriteLine("AuthEncryptString textEncrypted: " + textEncrypted);
+
+                return textEncrypted;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthEncryptString Ex: " + ex.Message);
+                return null;
+            }
+        }
+
         public void EncryptUserGUID()
         {
             string UserGUIDEncrypted = string.Empty;
@@ -100,11 +239,7 @@ namespace Budget_Planner.BudgetPlanner
                 {
                     using (Aes aes = Aes.Create())
                     {
-                        byte[] key =
-                        {
-                            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-                            0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
-                        };
+
                         aes.Key = key;
 
                         byte[] iv = aes.IV;
