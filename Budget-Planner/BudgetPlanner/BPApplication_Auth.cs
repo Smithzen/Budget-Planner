@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Diagnostics;
-using System.IO;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
-using System.Text.RegularExpressions;
 using System.Net.Mail;
-using Windows.Media.AppBroadcasting;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Budget_Planner.BudgetPlanner.Data;
 
 namespace Budget_Planner.BudgetPlanner
 {
@@ -20,6 +13,8 @@ namespace Budget_Planner.BudgetPlanner
         public string UserGUID { get; set; } = string.Empty;
         public string UserLoginToken { get; set; } = string.Empty;
         private string UserEncryptionKey { get; set; } = string.Empty; //base64 of aes.generatekey() used when creating account
+        public string UserEmail { get; set; } = string.Empty;
+        public string UserPassword { get; set; } = string.Empty;
         private byte[] EmailEncryptionKey { get; set; } = 
         {
             0x04, 0x02, 0x01, 0x04, 0x05, 0x07, 0x07, 0x08,
@@ -44,6 +39,7 @@ namespace Budget_Planner.BudgetPlanner
 
         public bool AuthIsEmailNew(string userEmailEncrypted)
         {
+
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "192.168.1.127",
@@ -76,14 +72,12 @@ namespace Budget_Planner.BudgetPlanner
                 }
                 reader.Close();
                 reader.Dispose();
-
-
-
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("AddNewExpense Ex: " + ex.Message);
                 return false;
-                Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
+
             }
             finally
             {
@@ -103,41 +97,116 @@ namespace Budget_Planner.BudgetPlanner
             }
         }
 
-        public void AuthCreateAccount(string userEmail, string userPassword)
+        public BPServerResult AuthCreateAccount(string userEmail, string userPassword)
         {
+            BPServerResult bpServerResult = new BPServerResult();
+            BPApplication bpApplication = new BPApplication();
+
             //check email and password are ok and email has not been used before
             bool bIsEmailAvailable = false;
 
-            if(AuthIsValidEmail(userEmail))
+            if (AuthIsValidEmail(userEmail))
             {
-                
+
                 //create userGUID
-                BPApplication bpApplication = new BPApplication();
                 bpApplication.UserGUID = Guid.NewGuid().ToString();
 
                 //encrypt email
-                string userEmailEncrypted = AuthEncryptString(Convert.ToBase64String(EmailEncryptionKey), userEmail);
+                string userEmailEncrypted = AuthEncryptString(EmailEncryptionKey, userEmail);
 
                 //check if email has been used before
                 bIsEmailAvailable = AuthIsEmailNew(userEmailEncrypted);
 
             }
+            else { bpServerResult.ServerResult = false; bpServerResult.ServerResultMessage = "Email is not valid"; }
 
             if (bIsEmailAvailable)
             {
                 //hash password
+                var salt = AuthGenerateSalt();
+                string hash = Convert.ToBase64String(KeyDerivation.Pbkdf2(userPassword, salt, KeyDerivationPrf.HMACSHA256, 10000, 256 / 8));
+                Debug.WriteLine("AuthCreateAccount hash: " + hash);
+                string saltB64 = Convert.ToBase64String(salt);
+                string passwordSaltHash = saltB64 + hash;
+                Debug.WriteLine("AuthCreateAccount passwordSaltHash: " + passwordSaltHash);
 
-                //generate userLoginToken
+                //generate userLoginToken and EncryptionKey
+                Aes aes = Aes.Create();
+                bpApplication.UserLoginToken = Guid.NewGuid().ToString();
+                Debug.WriteLine("AuthCreateAccount userLoginToken: " + bpApplication.UserLoginToken);
+                string UserEncryptionKey = Convert.ToBase64String(aes.Key);
+
+
 
                 //insert all data to sql
+                var builder = new MySqlConnectionStringBuilder
+                {
+                    Server = "192.168.1.127",
+                    UserID = "myuser",
+                    Password = "mypass",
+                    Database = "budget_planner",
+                };
 
-                //if insert is successfult write LoginToken and encrypted email to local file and encrypt login token
+                MySqlConnection DBConM = new MySqlConnection(builder.ConnectionString);
+                try
+                {
+                    DBConM.Open();
 
-                //return true or false if account creation is successful.
+                    MySqlCommand cmd;
+                    int intResult = 0;
+
+                    cmd = new MySqlCommand("INSERT INTO bpauth (UserGUID, UserEmail, UserPasswordHash, UserEncryptionKey, UserLoginToken) VALUE (@UserGUID, @UserEmail, @UserPasswordHash, @UserEncryptionKey, @UserLoginToken)", DBConM);
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserGUID", MySqlDbType = MySqlDbType.VarChar, Value = bpApplication.UserGUID });
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserEmail", MySqlDbType = MySqlDbType.VarChar, Value = bpApplication.UserEmail });
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserPasswordHash", MySqlDbType = MySqlDbType.VarChar, Value = passwordSaltHash });
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserEncryptionKey", MySqlDbType = MySqlDbType.VarChar, Value = UserEncryptionKey });
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserLoginToken", MySqlDbType = MySqlDbType.VarChar, Value = bpApplication.UserLoginToken });
+                    intResult = cmd.ExecuteNonQuery();
+
+                    if (intResult > 0)
+                    {
+                        //if insert is successfult write LoginToken and encrypted email to local file and encrypt login token
+                        string userLoginTokenEncrypted = AuthEncryptString(aes.Key, bpApplication.UserLoginToken);
+                        Debug.WriteLine("AuthCreateAccount userLoginTokenEncrypted: " + userLoginTokenEncrypted);
+
+                        bool bTokenCreated = AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted).Result;
+                        if (bTokenCreated)
+                        {
+                            bpServerResult.ServerResult = true;
+                            bpServerResult.ServerResultMessage = "Account successfully created";
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
+                    bpServerResult.ServerResult = false;
+                    bpServerResult.ServerResultMessage = ex.Message;
+                }
+                finally
+                {
+                    DBConM.Close();
+                    DBConM.Dispose();
+                }
+
+
+
             }
+            else { bpServerResult.ServerResult = false; bpServerResult.ServerResultMessage = "Email is not available"; }
+
+            return bpServerResult;
 
 
+        }
 
+        private static byte[] AuthGenerateSalt(int maxSaltLength = 32)
+        {
+            var salt = new byte[maxSaltLength];
+            var random = RandomNumberGenerator.Create();
+            random.GetNonZeroBytes(salt);
+
+            return salt;
         }
 
         private static bool AuthIsValidEmail(string userEmail)
@@ -190,7 +259,7 @@ namespace Budget_Planner.BudgetPlanner
 
         }
 
-        public string AuthEncryptString(string UserEncryptionKeyB64, string text)
+        private string AuthEncryptString(byte[] UserEncryptionKey, string text)
         {
             string textEncrypted = string.Empty;
 
@@ -200,7 +269,7 @@ namespace Budget_Planner.BudgetPlanner
                 {
                     using (Aes aes = Aes.Create())
                     {
-                        aes.Key = Convert.FromBase64String(UserEncryptionKey);
+                        aes.Key = UserEncryptionKey;
                         byte[] iv = aes.IV;
                         memoryStream.Write(iv, 0, iv.Length);
 
@@ -239,8 +308,6 @@ namespace Budget_Planner.BudgetPlanner
                 {
                     using (Aes aes = Aes.Create())
                     {
-
-                        aes.Key = key;
 
                         byte[] iv = aes.IV;
                         memoryStream.Write(iv, 0, iv.Length);
@@ -313,38 +380,46 @@ namespace Budget_Planner.BudgetPlanner
 
 
 
-        public async void WriteUserLoginTokenToDevice()
+        public async Task<bool> AuthWriteUserLoginTokenToLocalDevice(string userLoginTokenEncrypted)
         {
             string filePath = Path.Combine(FileSystem.CacheDirectory, "BPData.json");
             Console.WriteLine(Path.Exists(filePath));
 
-            BPApplication BPAuth = new BPApplication();
-            BPAuth.UserGUID = tempUserGUID;
-            BPAuth.UserLoginToken = tempUserGUID;
-
-            string BPAuthJson = JsonConvert.SerializeObject(BPAuth);
-
-            using (var fileStream = File.Create(filePath))
+            try
             {
-                Console.WriteLine(filePath);
-                using (StreamWriter writer = new StreamWriter(fileStream))
+                string BPAuthJson = JsonConvert.SerializeObject(userLoginTokenEncrypted);
+                Debug.WriteLine("AuthWriteUserLoginTokenToDevice userLoginTokenEncrypted: " + userLoginTokenEncrypted);
+
+                using (var fileStream = File.Create(filePath))
                 {
-                    await writer.WriteAsync(BPAuthJson);
+                    Console.WriteLine(filePath);
+                    using (StreamWriter writer = new StreamWriter(fileStream))
+                    {
+                        await writer.WriteAsync(BPAuthJson);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthWriteUserLogintokenToDevice Ex: " + ex.Message);
+                return false;
+            }
+
+
+
+            using (var readStream = File.OpenRead(filePath))
+            {
+                using (StreamReader reader = new StreamReader(readStream))
+                {
+                    string json = reader.ReadToEnd();
+                    Console.WriteLine(json);
                 }
             }
 
-            Console.WriteLine(Path.Exists(filePath));
-
+            return true;
 
         }
 
-        //using (var readStream = File.OpenRead(filePath))
-        //{
-        //    using (StreamReader reader = new StreamReader(readStream))
-        //    {
-        //        string json = reader.ReadToEnd();
-        //        Console.WriteLine(json);
-        //    }
-        //}
+
     }
 }

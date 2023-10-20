@@ -15,8 +15,6 @@ namespace Budget_Planner
         public async void Login(object sender, EventArgs e)
         {
             BPApplication bpApplication = new BPApplication();
-            bpApplication.EncryptUserGUID();
-            bpApplication.WriteUserLoginTokenToDevice();
             bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
             
             //Login login = new Login();
