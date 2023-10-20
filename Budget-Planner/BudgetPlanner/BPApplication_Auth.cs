@@ -104,7 +104,7 @@ namespace Budget_Planner.BudgetPlanner
 
             //check email and password are ok and email has not been used before
             bool bIsEmailAvailable = false;
-
+            string userEmailEncrypted = string.Empty;
             if (AuthIsValidEmail(userEmail))
             {
 
@@ -112,7 +112,7 @@ namespace Budget_Planner.BudgetPlanner
                 bpApplication.UserGUID = Guid.NewGuid().ToString();
 
                 //encrypt email
-                string userEmailEncrypted = AuthEncryptString(EmailEncryptionKey, userEmail);
+                userEmailEncrypted = AuthEncryptString(EmailEncryptionKey, userEmail);
 
                 //check if email has been used before
                 bIsEmailAvailable = AuthIsEmailNew(userEmailEncrypted);
@@ -122,6 +122,11 @@ namespace Budget_Planner.BudgetPlanner
 
             if (bIsEmailAvailable)
             {
+                if(!string.IsNullOrEmpty(userEmailEncrypted))
+                {
+                    bpApplication.UserEmail = userEmailEncrypted;
+                }
+
                 //hash password
                 var salt = AuthGenerateSalt();
                 string hash = Convert.ToBase64String(KeyDerivation.Pbkdf2(userPassword, salt, KeyDerivationPrf.HMACSHA256, 10000, 256 / 8));
