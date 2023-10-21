@@ -112,7 +112,7 @@ namespace Budget_Planner.BudgetPlanner
                 bpApplication.UserGUID = Guid.NewGuid().ToString();
 
                 //encrypt email
-                userEmailEncrypted = AuthEncryptString(EmailEncryptionKey, userEmail);
+                userEmailEncrypted = AuthEncryptString(EmailEncryptionKey, userEmail.ToLower());
 
                 //check if email has been used before
                 bIsEmailAvailable = AuthIsEmailNew(userEmailEncrypted);
@@ -174,7 +174,7 @@ namespace Budget_Planner.BudgetPlanner
                         string userLoginTokenEncrypted = AuthEncryptString(aes.Key, bpApplication.UserLoginToken);
                         Debug.WriteLine("AuthCreateAccount userLoginTokenEncrypted: " + userLoginTokenEncrypted);
 
-                        bool bTokenCreated = AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted).Result;
+                        bool bTokenCreated = AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted, bpApplication.UserGUID).Result;
                         if (bTokenCreated)
                         {
                             bpServerResult.ServerResult = true;
@@ -385,14 +385,14 @@ namespace Budget_Planner.BudgetPlanner
 
 
 
-        public async Task<bool> AuthWriteUserLoginTokenToLocalDevice(string userLoginTokenEncrypted)
+        public async Task<bool> AuthWriteUserLoginTokenToLocalDevice(string userLoginTokenEncrypted, string userGUID)
         {
             string filePath = Path.Combine(FileSystem.CacheDirectory, "BPData.json");
             Console.WriteLine(Path.Exists(filePath));
 
             try
             {
-                string BPAuthJson = JsonConvert.SerializeObject(userLoginTokenEncrypted);
+                string BPAuthJson = JsonConvert.SerializeObject(userGUID + userLoginTokenEncrypted);
                 Debug.WriteLine("AuthWriteUserLoginTokenToDevice userLoginTokenEncrypted: " + userLoginTokenEncrypted);
 
                 using (var fileStream = File.Create(filePath))

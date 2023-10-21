@@ -12,11 +12,13 @@
             <Entry Placeholder="email@example.com"
                    FontSize="Medium"></Entry>    
         </Border>
-        
+
 
         <Button Text="Login"
                 Clicked="Login"/>
 
+        <Button Text="Create New Account"
+                Clicked="CreateAccount"/>
 
 
     </VerticalStackLayout>

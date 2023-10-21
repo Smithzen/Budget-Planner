@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budget_Planner.pages.CreateAccount">
+
+    <Grid Padding="0, 10 , 10, 0"
+          RowDefinitions="auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+          RowSpacing="15"
+          ColumnSpacing="2"
+          ColumnDefinitions="*, auto, *"
+          BackgroundColor="White">
+
+        <Label LineBreakMode="WordWrap" MaximumWidthRequest="300" Text="Create your new account to get started saving." FontSize="Medium" VerticalTextAlignment="Center" TextColor="Black" Grid.Row="1" Grid.Column="1"/>
+
+        <Label x:Name="labelServerResult" MaximumWidthRequest="300" FontSize="Medium" VerticalTextAlignment="Center" LineBreakMode="WordWrap" TextColor="Black" Grid.Row="2" Grid.Column="1" IsVisible="False"/>
+
+
+        <Label Text="Email" FontSize="Large" VerticalTextAlignment="Center" Grid.Row="3" Grid.Column="1" TextColor="Black"></Label>
+        <Border Grid.Row="4" Grid.Column="1">
+            <Entry x:Name="entryEmail" Placeholder="example@example.com" FontSize="Medium" TextColor="Black" BackgroundColor="White"></Entry>
+        </Border>
+
+        <Label Text="Password" FontSize="Medium" VerticalTextAlignment="Center" Grid.Row="5" Grid.Column="1" TextColor="Black"/>
+        <Border Grid.Row="6" Grid.Column="1">
+            <Entry x:Name="entryPassword" Placeholder="Password" FontSize="Medium" TextColor="Black" BackgroundColor="White" IsPassword="True"/>
+        </Border>
+
+        <Button Padding="10, 10, 10, 10"
+                Text="Create Account"
+                Clicked="CreateNewAccount"
+                Grid.Row="7"
+                Grid.Column="1"/>
+
+    </Grid>
+    
+</ContentPage>

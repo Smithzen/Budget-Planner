@@ -15,12 +15,19 @@ namespace Budget_Planner
         public async void Login(object sender, EventArgs e)
         {
             BPApplication bpApplication = new BPApplication();
-            bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
+            //bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
             
             //Login login = new Login();
             await Shell.Current.GoToAsync("//TodaysSpending");
 
 
+        }
+
+        public async void CreateAccount(object sender, EventArgs e)
+        {
+            CreateAccount createAccount = new CreateAccount();
+            createAccount.Title = "Create Account";
+            await Navigation.PushAsync(createAccount);
         }
 
     }
