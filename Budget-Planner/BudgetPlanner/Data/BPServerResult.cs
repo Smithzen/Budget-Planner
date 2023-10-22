@@ -10,7 +10,7 @@ namespace Budget_Planner.BudgetPlanner.Data
     {
         public bool ServerResult { get; set; } = false;
         public string ServerResultMessage {  get; set; } = string.Empty;
-        public Int32 ServerResultCode { get; set; } = 200;
+        public Int32 ServerResultCode { get; set; } = 0;
 
     }
 }

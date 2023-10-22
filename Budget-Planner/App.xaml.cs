@@ -1,4 +1,6 @@
-﻿namespace Budget_Planner
+﻿using Budget_Planner.BudgetPlanner;
+
+namespace Budget_Planner
 {
     public partial class App : Application
     {
