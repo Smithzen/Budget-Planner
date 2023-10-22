@@ -1,7 +1,6 @@
 ﻿using Budget_Planner.pages;
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
-using MySql.Data.MySqlClient;
 
 namespace Budget_Planner
 {
@@ -10,11 +9,11 @@ namespace Budget_Planner
         public MainPage()
         {
             BPApplication bpApplication = new BPApplication();
-            BPServerResult result = bpApplication.AuthBackgroundlogin();
-            if (result.ServerResult)
-            {
-                Shell.Current.GoToAsync("//TodaysSpending");
-            }
+            //BPServerResult result = bpApplication.AuthBackgroundlogin();
+            //if (result.ServerResult)
+            //{
+            //    Shell.Current.GoToAsync("//TodaysSpending");
+            //}
 
             InitializeComponent();
             Shell.SetTabBarIsVisible(Content, false);
@@ -24,7 +23,7 @@ namespace Budget_Planner
         {
             BPApplication bpApplication = new BPApplication();
             //bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
-
+            bpApplication.AuthLogin("curtis.p.smith@zoho.com", "pass");
             //Login login = new Login();
             await Shell.Current.GoToAsync("//TodaysSpending");
 

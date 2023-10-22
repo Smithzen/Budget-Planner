@@ -120,7 +120,7 @@ namespace Budget_Planner.BudgetPlanner
                 string hash = Convert.ToBase64String(KeyDerivation.Pbkdf2(userPassword, salt, KeyDerivationPrf.HMACSHA256, 10000, 256 / 8));
                 Debug.WriteLine("AuthCreateAccount hash: " + hash);
                 string saltB64 = Convert.ToBase64String(salt);
-                string passwordSaltHash = saltB64 + hash;
+                string passwordSaltHash = saltB64 + "," + hash;
                 Debug.WriteLine("AuthCreateAccount passwordSaltHash: " + passwordSaltHash);
 
                 //generate userLoginToken and EncryptionKey
@@ -193,21 +193,6 @@ namespace Budget_Planner.BudgetPlanner
             random.GetNonZeroBytes(salt);
 
             return salt;
-        }
-        private static bool AuthIsValidEmail(string userEmail)
-        {
-            bool bValidEmail = true;
-            try
-            {
-                MailAddress mail = new MailAddress(userEmail);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
-                bValidEmail = false;
-            }
-
-            return bValidEmail;
         }
         public async Task<bool> AuthWriteUserLoginTokenToLocalDevice(string userLoginTokenEncrypted, string userLoginTokenGUID)
         {
@@ -420,10 +405,186 @@ namespace Budget_Planner.BudgetPlanner
         {
             BPServerResult result = new BPServerResult();
 
+            //check user email is valid email
+            if(AuthIsValidEmail(userEmail))
+            {
+                //get list of emails from db
+                //if email matches an email in the database check password
+                string userLoginTokenGUID = AuthEmailExistsInDB(userEmail.ToLower());
+
+                if(userLoginTokenGUID == null)
+                {
+                    result.ServerResult = false;
+                    result.ServerResultMessage = "Incorrect email";
+                }
+                else
+                {
+                    string passwordHash = AuthGetPasswordHashFromDB(userLoginTokenGUID);
+                    string[] passwordSaltHash = passwordHash.Split(",");
+                    byte[] passwordHashBytes = Convert.FromBase64String(passwordSaltHash[1]);
+                    byte[] salt = Convert.FromBase64String(passwordSaltHash[0]);
+                    if (salt.Length != 32)
+                    {
+                        result.ServerResult = false;
+                        result.ServerResultMessage = "incorrect salt";
+                    }
+
+                    //hash password and check if it matches those in database
+                    byte[] hashEnteredPassword = KeyDerivation.Pbkdf2(userPassword, salt, KeyDerivationPrf.HMACSHA256, 10000, 256 / 8);
+                    if (AuthByteArraysAreEqual(passwordHashBytes, hashEnteredPassword))
+                    {
+                        MySqlConnection DBConRO = new MySqlConnection(builder.ConnectionString);
+                        try
+                        {
+                            DBConRO.Open();
+
+                            MySqlCommand cmd;
+                            MySqlDataReader reader;
+                            int resultCount = 0;
+
+                            cmd = new MySqlCommand("SELECT UserGUID FROM bpauth WHERE UserLoginTokenGUID=@UserLoginTokenGUID", DBConRO);
+                            cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserLoginTokenGUID", MySqlDbType = MySqlDbType.VarChar, Value = userLoginTokenGUID });
+                            reader = cmd.ExecuteReader();
+
+                            while(reader.Read())
+                            {
+                                //if email and password match then set userGUID to be correct user guid and set server result to true
+
+                                UserGUID = reader["UserGUID"].ToString();
+                                resultCount++;
+                            }
+                            reader.Close();
+                            reader.Dispose();
+
+                            result.ServerResult = true;
+                            result.ServerResultMessage = "Login Successful";
+                        }
+                        catch(Exception ex)
+                        {
+                            Debug.WriteLine("AuthLogin Ex: " + ex.Message);
+                            result.ServerResult = false;
+                            result.ServerResultMessage = ex.Message;
+                        }
+                        finally
+                        {
+                            DBConRO.Close();
+                            DBConRO.Dispose();
+                        }
+                    }
+
+                }
+
+            }
+            else
+            {
+                result.ServerResult = false;
+                result.ServerResultMessage = "Invalid email address";
+            }
 
             return result;
         }
+        private string AuthEmailExistsInDB(string userEmail)
+        {
+            string acceptedEmail = null;
+            string userLoginTokenGUID = null;
+            MySqlConnection DBconRO = new MySqlConnection(builder.ConnectionString);
+            try
+            {
+                DBconRO.Open();
 
+                MySqlCommand cmd;
+                MySqlDataReader reader;
+
+                cmd = new MySqlCommand("SELECT UserEmail, UserLoginTokenGUID FROM bpauth", DBconRO);
+                reader = cmd.ExecuteReader();
+
+                string emailEncrypted;
+
+                while (reader.Read())
+                {
+                    //foreach email decrypt and check if identical to userEmail
+                    emailEncrypted = reader["UserEmail"].ToString();
+                    string emailDecrypted = AuthDecryptString(EmailEncryptionKey, emailEncrypted);
+                    emailDecrypted = emailDecrypted.Remove(emailDecrypted.Length-1);
+                    if (userEmail == emailDecrypted)
+                    {
+                        acceptedEmail = userEmail;
+                        userLoginTokenGUID = reader["UserLoginTokenGUID"].ToString();
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                reader.Close();
+                reader.Dispose();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthLogin Ex: " + ex.Message);
+                return userLoginTokenGUID = null;
+            }
+            finally
+            {
+                DBconRO.Close();
+                DBconRO.Dispose();
+            }
+
+            if (acceptedEmail != null)
+            {
+                return userLoginTokenGUID;
+            }
+            else
+            {
+                userLoginTokenGUID = null;
+                return userLoginTokenGUID;
+            }
+
+        }
+        private string AuthGetPasswordHashFromDB(string userLoginTokenGUID) 
+        {
+            string passwordHash = null;
+            MySqlConnection DBConRO = new MySqlConnection(builder.ConnectionString);
+            try
+            {
+                DBConRO.Open();
+
+                MySqlCommand cmd;
+                MySqlDataReader reader;
+                int resultCount = 0;
+
+                cmd = new MySqlCommand("SELECT UserPasswordHash FROM bpauth WHERE UserLoginTokenGUID=@UserLoginTokenGUID", DBConRO);
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserLoginTokenGUID", MySqlDbType = MySqlDbType.VarChar, Value = userLoginTokenGUID });
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    passwordHash = reader["UserPasswordHash"].ToString();
+                    resultCount++;
+                }
+                reader.Close();
+                reader.Dispose();
+
+                if (resultCount != 1)
+                {
+                    passwordHash = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthGetPasswordHashFromDB Ex: " + ex.Message);
+                passwordHash = null;
+            }
+            finally
+            {
+                DBConRO.Close();
+                DBConRO.Dispose();
+            }
+
+            return passwordHash;
+        }
 
         //Useful functions
         private string AuthEncryptString(byte[] UserEncryptionKey, string text)
@@ -505,6 +666,46 @@ namespace Budget_Planner.BudgetPlanner
             return textDecrypted;
 
         }
+        private static bool AuthIsValidEmail(string userEmail)
+        {
+            bool bValidEmail = true;
+            try
+            {
+                MailAddress mail = new MailAddress(userEmail);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("AuthCreateAccount Ex: " + ex.Message);
+                bValidEmail = false;
+            }
+
+            return bValidEmail;
+        }
+        private bool AuthByteArraysAreEqual(byte[] a, byte[] b)
+        {
+            bool result = false;
+
+            if (a.Length == b.Length)
+            {
+                for (int i = 0; i < a.Length; i++)
+                {
+                    if (a[i] == b[i])
+                    {
+                        result = true;
+                    }
+                    else
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+
+            }
+
+            return result;
+
+        }
+
 
 
 
