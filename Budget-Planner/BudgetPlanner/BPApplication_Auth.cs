@@ -441,23 +441,48 @@ namespace Budget_Planner.BudgetPlanner
                             MySqlCommand cmd;
                             MySqlDataReader reader;
                             int resultCount = 0;
+                            string userLoginToken = null;
+                            string userEncryptionKey = null;
 
-                            cmd = new MySqlCommand("SELECT UserGUID FROM bpauth WHERE UserLoginTokenGUID=@UserLoginTokenGUID", DBConRO);
+                            cmd = new MySqlCommand("SELECT UserGUID, UserLoginToken, UserEncryptionKey FROM bpauth WHERE UserLoginTokenGUID=@UserLoginTokenGUID", DBConRO);
                             cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserLoginTokenGUID", MySqlDbType = MySqlDbType.VarChar, Value = userLoginTokenGUID });
                             reader = cmd.ExecuteReader();
 
                             while(reader.Read())
                             {
                                 //if email and password match then set userGUID to be correct user guid and set server result to true
-
                                 UserGUID = reader["UserGUID"].ToString();
+                                userEncryptionKey = reader["UserEncryptionKey"].ToString();
+                                userLoginToken = reader["UserLoginToken"].ToString();
                                 resultCount++;
                             }
                             reader.Close();
                             reader.Dispose();
 
-                            result.ServerResult = true;
-                            result.ServerResultMessage = "Login Successful";
+                            if (resultCount != 1)
+                            {
+                                result.ServerResult = false;
+                                result.ServerResultMessage = "Login Token did not match a unique user";
+                            }
+
+
+                            //if successful then write logintoken to device using same function as on account creation
+                            if(!AuthCheckForExistingLocalBPDataFile())
+                            {
+                                string userLoginTokenEncrypted = AuthEncryptString(Convert.FromBase64String(userEncryptionKey), userLoginToken);
+                                if(AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted, userLoginTokenGUID)    .Result)
+                                {
+                                    result.ServerResult = true;
+                                    result.ServerResultMessage = "Login Successful! Token Created";
+                                }
+
+                            }
+                            else
+                            {
+                                result.ServerResult = true;
+                                result.ServerResultMessage = "Login Successful!";
+                            }
+
                         }
                         catch(Exception ex)
                         {
@@ -470,6 +495,12 @@ namespace Budget_Planner.BudgetPlanner
                             DBConRO.Close();
                             DBConRO.Dispose();
                         }
+                    }
+                    else
+                    {
+                        //set incorrect password serverResult
+                        result.ServerResult = false;
+                        result.ServerResultMessage = "Email or password is incorrect";
                     }
 
                 }
@@ -585,6 +616,7 @@ namespace Budget_Planner.BudgetPlanner
 
             return passwordHash;
         }
+
 
         //Useful functions
         private string AuthEncryptString(byte[] UserEncryptionKey, string text)

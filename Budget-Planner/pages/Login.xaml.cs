@@ -9,11 +9,11 @@ namespace Budget_Planner
         public MainPage()
         {
             BPApplication bpApplication = new BPApplication();
-            //BPServerResult result = bpApplication.AuthBackgroundlogin();
-            //if (result.ServerResult)
-            //{
-            //    Shell.Current.GoToAsync("//TodaysSpending");
-            //}
+            BPServerResult result = bpApplication.AuthBackgroundlogin();
+            if (result.ServerResult)
+            {
+                Shell.Current.GoToAsync("//TodaysSpending");
+            }
 
             InitializeComponent();
             Shell.SetTabBarIsVisible(Content, false);
@@ -22,10 +22,24 @@ namespace Budget_Planner
         public async void Login(object sender, EventArgs e)
         {
             BPApplication bpApplication = new BPApplication();
-            //bpApplication.AuthCreateAccount("curtis.p.smith@zoho.com", "hello");
-            bpApplication.AuthLogin("curtis.p.smith@zoho.com", "pass");
+            BPServerResult result = new BPServerResult();
+
+            string userEmail = entryEmail.Text;
+            string userPassword = entryPassword.Text;
+
+            result = bpApplication.AuthLogin(userEmail, userPassword);
+            if (result.ServerResult)
+            {
+                await Shell.Current.GoToAsync("//TodaysSpending");
+            }
+            else
+            {
+                labelServerResult.Text = result.ServerResultMessage;
+                labelServerResult.IsVisible = true;
+                labelServerResult.BackgroundColor = Color.FromRgba(200, 0, 0, 100);
+            }
+
             //Login login = new Login();
-            await Shell.Current.GoToAsync("//TodaysSpending");
 
 
         }
