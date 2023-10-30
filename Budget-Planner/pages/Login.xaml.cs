@@ -14,9 +14,11 @@ namespace Budget_Planner
             {
                 Shell.Current.GoToAsync("//TodaysSpending");
             }
-
-            InitializeComponent();
-            Shell.SetTabBarIsVisible(Content, false);
+            else
+            {
+                InitializeComponent();
+                Shell.SetTabBarIsVisible(Content, false);
+            }
         }
 
         public async void Login(object sender, EventArgs e)
@@ -38,9 +40,6 @@ namespace Budget_Planner
                 labelServerResult.IsVisible = true;
                 labelServerResult.BackgroundColor = Color.FromRgba(200, 0, 0, 100);
             }
-
-            //Login login = new Login();
-
 
         }
 

@@ -470,7 +470,7 @@ namespace Budget_Planner.BudgetPlanner
                             if(!AuthCheckForExistingLocalBPDataFile())
                             {
                                 string userLoginTokenEncrypted = AuthEncryptString(Convert.FromBase64String(userEncryptionKey), userLoginToken);
-                                if(AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted, userLoginTokenGUID)    .Result)
+                                if(AuthWriteUserLoginTokenToLocalDevice(userLoginTokenEncrypted, userLoginTokenGUID).Result)
                                 {
                                     result.ServerResult = true;
                                     result.ServerResultMessage = "Login Successful! Token Created";

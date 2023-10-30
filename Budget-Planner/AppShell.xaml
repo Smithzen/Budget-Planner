@@ -22,14 +22,18 @@
 
     <TabBar Shell.BackgroundColor="Coral"
             Shell.TabBarBackgroundColor="Coral">
+
         <ShellContent Title="Today's Spending"
                       ContentTemplate="{DataTemplate pages:TodaysSpending}"
                       Route="TodaysSpending"/>
 
-
         <ShellContent Title="Statistics"
                       ContentTemplate="{DataTemplate pages:Statistics}"
                       Route="statistics"/>
+
+        <ShellContent Title="Options"
+                      ContentTemplate="{DataTemplate pages:More}"
+                      Route="More"/>
 
     </TabBar>
 
