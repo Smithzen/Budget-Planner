@@ -2,14 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Budget_Planner.pages.More"
+             x:Name="page"
              Title="Options">
 
-    <ListView ItemsSource="{Binding list}"
+    <ListView BindingContext="{x:Reference page}"
+              ItemsSource="{Binding list}"
               BackgroundColor="White">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
-                    <Label Text="Hello"></Label>
+                    <Label Text="{Binding name}"
+                           TextColor="Black"
+                           Style="{x:StaticResource Key=labelBar}"/>
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>

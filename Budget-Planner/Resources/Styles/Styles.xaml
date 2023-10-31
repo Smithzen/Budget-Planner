@@ -9,6 +9,12 @@
         <Setter Property="FontSize" Value="Medium"></Setter>
         <Setter Property="HorizontalOptions" Value="FillAndExpand"></Setter>
     </Style>
+
+    <Style TargetType="Label" x:Key="labelBar">
+        <Setter Property="FontSize" Value="Medium"></Setter>
+        <Setter Property="HorizontalOptions" Value="Start"></Setter>
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+    </Style>
     
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
