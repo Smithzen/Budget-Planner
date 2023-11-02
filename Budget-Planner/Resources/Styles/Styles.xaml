@@ -11,7 +11,7 @@
     </Style>
 
     <Style TargetType="Label" x:Key="labelBar">
-        <Setter Property="FontSize" Value="Medium"></Setter>
+        <Setter Property="FontSize" Value="Title"></Setter>
         <Setter Property="HorizontalOptions" Value="Start"></Setter>
         <Setter Property="VerticalOptions" Value="Center"></Setter>
     </Style>

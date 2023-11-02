@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Budget_Planner.BudgetPlanner.Data"
              x:Class="Budget_Planner.pages.More"
              x:Name="page"
              Title="Options">
 
     <ListView BindingContext="{x:Reference page}"
-              ItemsSource="{Binding list}"
-              BackgroundColor="White">
+              ItemsSource="{Binding ListMoreOptions}"
+              BackgroundColor="White"
+              RowHeight="70"
+              SelectionMode="Single"
+              ItemSelected="MoreGoToSelectedPage">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <ViewCell>
-                    <Label Text="{Binding name}"
-                           TextColor="Black"
-                           Style="{x:StaticResource Key=labelBar}"/>
-                </ViewCell>
+                <local:CustomTextCell Text="{Binding MoreOptionName}"
+                                      Detail="{Binding MoreOptionDetail}"
+                                      TextColor="Black"
+                                      DetailColor="Black"
+                                      SelectedBackgroundColor="LightGrey">
+                </local:CustomTextCell>
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
-
 
 </ContentPage>

@@ -78,6 +78,9 @@
 	  <MauiXaml Update="pages\More.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="pages\SpendingCategories.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="pages\TodaysSpending.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
