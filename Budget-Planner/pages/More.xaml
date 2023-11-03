@@ -6,12 +6,15 @@
              x:Name="page"
              Title="Options">
 
+    <!--SelectionMode="Single"
+              ItemSelected="MoreGoToSelectedPage"-->
+
     <ListView BindingContext="{x:Reference page}"
               ItemsSource="{Binding ListMoreOptions}"
               BackgroundColor="White"
               RowHeight="70"
               SelectionMode="Single"
-              ItemSelected="MoreGoToSelectedPage">
+              ItemTapped="MoreGoToSelectedPage">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <local:CustomTextCell Text="{Binding MoreOptionName}"
