@@ -1,5 +1,7 @@
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
+using CommunityToolkit.Maui.Views;
+
 
 namespace Budget_Planner.pages;
 
@@ -35,6 +37,25 @@ public partial class SpendingCategories : ContentPage
 			ServerResult.IsVisible = true;
 		}
 
+	}
+
+
+	public void SpendingCategoriesCreateNewCategory(object sender, EventArgs e)
+	{
+		var popup = new Popup()
+		{
+			Content = new VerticalStackLayout()
+			{
+				Children =
+				{
+					new Label()
+					{
+						Text = "Test popup",
+						TextColor = Color.FromRgb(0,0,0)
+					}
+				}
+			}
+		};
 	}
 
 
