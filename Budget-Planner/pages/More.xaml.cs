@@ -19,9 +19,7 @@ public partial class More : ContentPage
 
     public async void MoreGoToSelectedPage(object sender,  EventArgs e)
     {
-        Debug.WriteLine(sender);
         var ListView = (ListView)sender;
-        Debug.WriteLine(ListView.SelectedItem);
         var item = ListView.SelectedItem as BPMoreOption;
 
         await Navigation.PushAsync(item.MoreOptionPage);

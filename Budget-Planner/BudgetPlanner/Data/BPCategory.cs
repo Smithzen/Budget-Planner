@@ -11,5 +11,6 @@ namespace Budget_Planner.BudgetPlanner.Data
         public string CategoryGUID { get; set; } = string.Empty;
         public string CategoryName { get; set; } = string.Empty;
         public string CategoryDescription { get; set; } = string.Empty;
+        public DateTime CategoryCreationDate { get; set; } = DateTime.MinValue;
     }
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Budget_Planner.pages.MorePages.AddSpendingCategory"
+             Title="Add Spending Category">
+
+    <Grid Padding="20, 10 , 10, 0"
+          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, *, Auto, *"
+          RowSpacing="15"
+          ColumnSpacing="2"
+          ColumnDefinitions="*, *, *"
+          BackgroundColor="White">
+        
+        <!--Error Label-->
+        <Label x:Name="labelServerResult" MaximumWidthRequest="300" FontSize="Medium" VerticalTextAlignment="Center" LineBreakMode="WordWrap" TextColor="Black" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" IsVisible="False"/>
+
+
+        <!--Enter Category Name-->
+        <Label Text="Category Name"
+               TextColor="Black"
+               FontSize="Medium"
+               Grid.Row="1"
+               Grid.Column="0"/>
+
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Entry x:Name="entryCategoryName" Placeholder="Name" FontSize="Medium" TextColor="Black" BackgroundColor="White"/>
+        </Border>
+
+
+        
+        <!--Enter Category Description-->
+        <Label Text="Category Description"
+               TextColor="Black"
+               FontSize="Medium"
+               Grid.Row="4"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+
+        <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3">
+            <Editor x:Name="entryCategoryDescription" Placeholder="Description" FontSize="Medium" TextColor="Black" BackgroundColor="White" HeightRequest="150"/>
+        </Border>
+
+
+        
+        <!--Save Button-->
+        <Button Text="Save"
+                BackgroundColor="Coral"
+                Grid.Row="7"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Clicked="AddSpendingCategoryCreateCategory"/>
+
+
+    </Grid>
+    
+    
+</ContentPage>

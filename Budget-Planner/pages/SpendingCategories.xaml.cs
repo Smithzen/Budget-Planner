@@ -1,7 +1,7 @@
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
-using CommunityToolkit.Maui.Views;
-
+using Budget_Planner.pages.MorePages;
+using System.Diagnostics;
 
 namespace Budget_Planner.pages;
 
@@ -17,7 +17,12 @@ public partial class SpendingCategories : ContentPage
 	public SpendingCategories(string title)
 	{
 		this.Title = title;
+
+		GetSpendingCategoriesList();
+
 		InitializeComponent();
+
+
 	}
 
 
@@ -28,35 +33,33 @@ public partial class SpendingCategories : ContentPage
 		if (result.ServerResult)
 		{
 			listCategories = result.ServerResultDataList as List<BPCategory>;
-			ServerResult.IsVisible = false;
 		}
 		else
 		{
 			ServerResult.Text = result.ServerResultMessage;
-			ServerResult.TextColor = Color.FromRgba(0, 0, 0, 1);
+			ServerResult.TextColor = Color.FromRgba(200, 0, 0, 1);
 			ServerResult.IsVisible = true;
 		}
 
 	}
 
 
-	public void SpendingCategoriesCreateNewCategory(object sender, EventArgs e)
+	public async void SpendingCategoriesCreateNewCategory(object sender, EventArgs e)
 	{
-		var popup = new Popup()
-		{
-			Content = new VerticalStackLayout()
-			{
-				Children =
-				{
-					new Label()
-					{
-						Text = "Test popup",
-						TextColor = Color.FromRgb(0,0,0)
-					}
-				}
-			}
-		};
-	}
+		AddSpendingCategory addSpendingCategory = new AddSpendingCategory();
+		await Navigation.PushAsync(addSpendingCategory);
 
+    }
+
+	public async void SpendingCategoriesDeleteCategory(object sender , EventArgs e)
+	{
+		var button = (Button)sender;
+		var categoryGUID = button.CommandParameter;
+
+		var result = await DisplayAlert("Delete Category", "Are you sure you want to delete this category?", "Yes", "No");
+		Debug.WriteLine(result);
+
+		//if result is true(find new variable name) then call bpApp delete function
+	}
 
 }

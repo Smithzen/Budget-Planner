@@ -5,60 +5,73 @@
              x:Name="page"
              Title="SpendingCategories">
 
-    <Grid Padding="0, 10 , 10, 0"
-          RowDefinitions="Auto, Auto"
+    <Grid Padding="20, 0 , 0, 0"
+          RowDefinitions="Auto, Auto, Auto"
           RowSpacing="15"
           ColumnSpacing="2"
-          ColumnDefinitions="*, auto, *"
+          ColumnDefinitions="*, *, *"
           BackgroundColor="White">
 
-        <Label Text="Create new category"
-               TextColor="Black"
-               FontSize="Medium"
-               VerticalTextAlignment="Center"
-               Grid.Row="0"
-               Grid.Column="0"
-               Padding="20, 0, 0, 0"/>
-
-        <Button Text="+"
-                FontSize="Large"
-                TextColor="Black"
-                HorizontalOptions="EndAndExpand"
-                Grid.Row="0"
-                Grid.Column="3"
-                Clicked="SpendingCategoriesCreateNewCategory"/>
-
-
+        
+        <!--Server Result-->
         <Label x:Name="ServerResult"
                IsVisible="false"
                Grid.Row="0"
                Grid.ColumnSpan="3"/>
 
+
         
-        
+        <!--Create New Category-->
+        <Label Text="Create new category"
+               TextColor="Black"
+               FontSize="Medium"
+               VerticalTextAlignment="Center"
+               Grid.Row="1"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+
+        <Button Text="+"
+                FontSize="Large"
+                TextColor="Black"
+                HorizontalOptions="Center"
+                Grid.Row="1"
+                Grid.Column="3"
+                Clicked="SpendingCategoriesCreateNewCategory"/>
+
+        <!--List of current categories-->
         <ListView BindingContext="{x:Reference page}"
                   ItemsSource="{Binding listCategories}"
-                  RowHeight="70">
+                  RowHeight="70"
+                  SelectionMode="None"
+                  Grid.Row="3"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="3">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <Grid RowDefinitions="Auto, Auto"
-                              ColumnDefinitions="Auto, Auto">
+                              ColumnDefinitions="*, *, *">
                             <Label Text="{Binding CategoryName}"
+                                   x:Name="labelCategoryName"
                                    TextColor="Black"
+                                   FontSize="Medium"
                                    Grid.Row="0"
-                                   Grid.Column="0"/>
-                            
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="2"/>
+
                             <Label Text="{Binding CategoryDescription}"
+                                   x:Name="labelCategoryDescription"
                                    TextColor="Black"
-                                   IsVisible="false"
                                    Grid.Row="1"
-                                   Grid.Column="0"/>
-                            
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="2"/>
+
                             <Button Text="Delete"
                                     TextColor="Red"
-                                    Grid.Column="1"
-                                    Grid.RowSpan="2"/>
+                                    Grid.Column="2"
+                                    Grid.RowSpan="2"
+                                    Clicked="SpendingCategoriesDeleteCategory"
+                                    CommandParameter="{Binding CategoryGUID}"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

@@ -38,7 +38,7 @@ namespace Budget_Planner
             {
                 labelServerResult.Text = result.ServerResultMessage;
                 labelServerResult.IsVisible = true;
-                labelServerResult.BackgroundColor = Color.FromRgba(200, 0, 0, 100);
+                labelServerResult.BackgroundColor = Color.FromRgba(200, 0, 0, 1);
             }
 
         }
