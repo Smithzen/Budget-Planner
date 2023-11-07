@@ -38,8 +38,10 @@ public partial class AddSpendingCategory : ContentPage
             labelServerResult.BackgroundColor = Color.FromRgba(200, 0, 0, 1);
 		}
 		else
-		{
+		{	
+
 			await Navigation.PopAsync();
+
 		}
     }
 }

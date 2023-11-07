@@ -45,7 +45,11 @@
                   SelectionMode="None"
                   Grid.Row="3"
                   Grid.Column="0"
-                  Grid.ColumnSpan="3">
+                  Grid.ColumnSpan="3"
+                  x:Name="listSpendingCategories"
+                  VerticalOptions="FillAndExpand"
+                  IsPullToRefreshEnabled="true"
+                  Refreshing="GetSpendingCategoriesList">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
