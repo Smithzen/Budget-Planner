@@ -24,8 +24,9 @@ namespace Budget_Planner.BudgetPlanner
                 MySqlCommand cmd;
                 MySqlDataReader reader;
 
-                cmd = new MySqlCommand("SELECT CategoryGUID, CategoryName, CategoryDescription FROM categories WHERE UserGUID=@UserGUID", DBConRO);
+                cmd = new MySqlCommand("SELECT CategoryGUID, CategoryName, CategoryDescription FROM categories WHERE UserGUID=@UserGUID AND CategoryIsDeleted=@CategoryIsDeleted", DBConRO);
                 cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserGUID", MySqlDbType = MySqlDbType.VarChar, Value = UserGUID });
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@CategoryIsDeleted", MySqlDbType = MySqlDbType.Int16, Value = 0 });
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -110,6 +111,47 @@ namespace Budget_Planner.BudgetPlanner
 
             return bpServerResult;
 
+        }
+
+        public BPServerResult SpendingCategoriesDeleteCategory(string categoryToDeleteGUID)
+        {
+            BPServerResult result = new BPServerResult();
+
+            MySqlConnection DBConM = new MySqlConnection(builder.ConnectionString);
+            try
+            {
+                DBConM.Open();
+
+                MySqlCommand cmd;
+                Int32 intResult = 0;
+
+                cmd = new MySqlCommand("UPDATE categories SET CategoryIsDeleted=@CategoryIsDeleted, CategoryDateDeleted=@CategoryDateDeleted WHERE CategoryGUID=@CategoryGUID AND UserGUID=@UserGUID", DBConM);
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@CategoryIsDeleted", MySqlDbType = MySqlDbType.Int16, Value = 1 });
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@CategoryDateDeleted", MySqlDbType = MySqlDbType.DateTime, Value = DateTime.UtcNow });
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@CategoryGUID", MySqlDbType = MySqlDbType.VarChar, Value = categoryToDeleteGUID });
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserGUID", MySqlDbType = MySqlDbType.VarChar, Value = BPApplication.UserGUID });
+                intResult = cmd.ExecuteNonQuery();
+
+                if (intResult > 0)
+                {
+                    result.ServerResult = true;
+                    result.ServerResultMessage = "Successfully deleted category";
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                result.ServerResult = false;
+                result.ServerResultMessage = "SpendingCategoriesDeleteCategory EX:" + ex.Message;
+            }
+            finally
+            {
+                DBConM.Close();
+                DBConM.Dispose();
+            }
+
+            return result;
         }
     }
 }

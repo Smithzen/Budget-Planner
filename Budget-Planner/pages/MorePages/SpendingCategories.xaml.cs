@@ -1,9 +1,9 @@
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
 using Budget_Planner.pages.MorePages;
-using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
-using System.Timers;
+
+
 
 namespace Budget_Planner.pages;
 
@@ -23,8 +23,8 @@ public partial class SpendingCategories : ContentPage
 		GetSpendingCategoriesList();
 
 		InitializeComponent();
-	}
 
+	}
 
 	public void GetSpendingCategoriesList()
 	{
@@ -33,8 +33,8 @@ public partial class SpendingCategories : ContentPage
 		if (result.ServerResult)
 		{
 			listCategories = result.ServerResultDataList as List<BPCategory>;
-		}
-		else
+        }
+        else
 		{
 			ServerResult.Text = result.ServerResultMessage;
 			ServerResult.TextColor = Color.FromRgba(200, 0, 0, 1);
@@ -43,23 +43,24 @@ public partial class SpendingCategories : ContentPage
 
 	}
 
-    public void GetSpendingCategoriesList(object sender, EventArgs e)
-    {
-        BPApplication bpApp = new BPApplication();
-        var result = bpApp.SpendingCategoriesGetAllCategories();
-        if (result.ServerResult)
-        {
-            listCategories = result.ServerResultDataList as List<BPCategory>;
-        }
-        else
-        {
-            ServerResult.Text = result.ServerResultMessage;
-            ServerResult.TextColor = Color.FromRgba(200, 0, 0, 1);
-            ServerResult.IsVisible = true;
-        }
-		listSpendingCategories.EndRefresh();
-    }
+	public void SpendingCategoriesRefreshListView(object sender, EventArgs e)
+	{
+		BPApplication bpApp = new BPApplication();
+		var result = bpApp.SpendingCategoriesGetAllCategories();
+		if (result.ServerResult)
+		{
+			listCategories = result.ServerResultDataList as List<BPCategory>;
+			listSpendingCategories.ItemsSource = listCategories;
+		}
+		else
+		{
+			ServerResult.Text = result.ServerResultMessage;
+			ServerResult.TextColor = Color.FromRgba(200, 0, 0, 1);
+			ServerResult.IsVisible = true;
+		}
+        listSpendingCategories.EndRefresh();
 
+    }
 
     public async void SpendingCategoriesCreateNewCategory(object sender, EventArgs e)
 	{
@@ -76,8 +77,17 @@ public partial class SpendingCategories : ContentPage
 		var result = await DisplayAlert("Delete Category", "Are you sure you want to delete this category?", "Yes", "No");
 		Debug.WriteLine(result);
 
-		GetSpendingCategoriesList();
 		//if result is true(find new variable name) then call bpApp delete function
+		if (result)
+		{
+			BPApplication bpApp = new BPApplication();
+			var serverResult = bpApp.SpendingCategoriesDeleteCategory(categoryGUID.ToString());
+
+			if (serverResult.ServerResult)
+			{
+				listSpendingCategories.BeginRefresh();
+			}
+		}
 	}
 
 }
