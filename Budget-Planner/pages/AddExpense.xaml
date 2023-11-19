@@ -9,15 +9,15 @@
 
     <Grid Padding="10, 10 , 10, 0"
           RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
-          RowSpacing="10"
+          RowSpacing="15"
           ColumnSpacing="2"
-          ColumnDefinitions="auto, *, *, auto"
+          ColumnDefinitions="auto, *, Auto, *"
           BackgroundColor="White">
 
         <!--Server Result-->
         <Label x:Name="ServerResult"
                IsVisible="false"
-               Grid.Row="0"
+               Grid.Row="6"
                Grid.ColumnSpan="3"/>
 
         <!--Enter detail text-->
@@ -28,59 +28,110 @@
                Grid.Row="0"
                Grid.Column="0" Grid.ColumnSpan="4"/>
 
-        
+
+
+        <Label Text="Expense Date"
+               TextColor="Black"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               Grid.Row="1"
+               Grid.Column="0"/>
+
+        <Border BackgroundColor="White"
+                Stroke="Black"
+                Grid.Row="1"
+                Grid.Column="2">
+
+            <DatePicker TextColor="Black"
+                        FontSize="Medium"
+                        x:Name="dateExpenseDate"/>
+        </Border>
+
+
         <!--spending categoy label-->
         <Label TextColor="Black"
                Text="Select category"
                FontSize="Medium"
-               Grid.Row="1"
+               VerticalOptions="Center"
+               Grid.Row="2"
                Grid.Column="0"/>
 
-        <Label TextColor="Black"
-               Text="Enter Amount"
-               FontSize="Medium"
-               Grid.Row="1"
-               Grid.Column="3"/>
+
 
         <!--Spending category picker-->
         <Border BackgroundColor="White"
-                StrokeThickness="2"
                 Stroke="Black"
                 Grid.Row="2"
-                Grid.Column="0">
+                Grid.Column="2">
             
             
-            <Picker Title="Select a category"
-                TextColor="Black"
-                FontSize="Medium"
-                ItemsSource="{Binding listCategories}"
-                ItemDisplayBinding="{Binding CategoryName}"
+            <Picker x:Name="pickerSpendingCategory"
+                    Title="Select a category"
+                    TextColor="Black"
+                    FontSize="Medium"
+                    ItemsSource="{Binding listCategories}"
+                    ItemDisplayBinding="{Binding CategoryName}"
 />
         </Border>
 
 
+        <!--Enter Amoun Spent-->
+        <Label TextColor="Black"
+               Text="Enter Amount"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               Grid.Row="3"
+               Grid.Column="0"
+               Grid.ColumnSpan="3"/>
+
         <Border BackgroundColor="White"
                 Stroke="Black"
-                StrokeThickness="2"
-                Grid.Row="2"
-                Grid.Column="3">
+                Grid.Row="3"
+                Grid.Column="2">
             <Entry x:Name="entryAmountSpent"
                    Placeholder="Enter amount"
                    TextColor="Black"
                    FontSize="Medium"
                    Keyboard="Numeric"
                    ReturnType="Next"
-                   />
+                   TextChanged="ExpenseAmountFormatValue"/>
+        </Border>
+
+        
+        <!--Enter Expense notes-->
+        <Label Text="Enter Expense Notes"
+               TextColor="Black"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               Grid.Row="4"
+               Grid.Column="0"/>
+
+        <Border BackgroundColor="White"
+                Stroke="Black"
+                Grid.Row="5"
+                Grid.Column="0"
+                Grid.ColumnSpan="3">
+            <Editor x:Name="editorExpenseNotes" 
+                    Placeholder="Expense notes" 
+                    FontSize="Medium" 
+                    TextColor="Black" 
+                    BackgroundColor="White" 
+                    HeightRequest="150"/>
+
         </Border>
 
 
+        
+        
 
         <!--Save Button-->
         <Button Text="Save"
+                FontSize="Medium"
                 BackgroundColor="Coral"
                 Grid.Row="6"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"/>
+                Grid.Column="0"
+                Grid.ColumnSpan="4"
+                Clicked="AddNewExpense"/>
 
 
     </Grid>

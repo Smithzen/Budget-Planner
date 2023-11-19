@@ -10,10 +10,8 @@ namespace Budget_Planner.BudgetPlanner.Data
     {
         public string ExpenseGUID { get; set; } = string.Empty;
         public DateTime ExpenseDate { get; set; } = DateTime.Now;
-        public double ExpenseFoodValue { get; set; } = 0;
-        public double ExpenseBillsValue { get; set; } = 0;
-        public double ExpenseRecreationalValue { get; set; } = 0;
-        public double ExpenseOtherValue { get; set; } = 0;
+        public BPCategory ExpenseCategory { get; set; } = new BPCategory();
+        public double ExpenseAmount { get; set; } = 0;
         public string ExpenseNote { get; set; } = string.Empty;
 
     }
