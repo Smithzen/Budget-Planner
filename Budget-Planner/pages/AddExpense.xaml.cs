@@ -18,6 +18,8 @@ public partial class AddExpense : ContentPage
         GetSpendingCategoriesList();
         BindingContext = this;
 
+        Shell.SetTabBarIsVisible( this, false);
+
     }
 
     public void GetSpendingCategoriesList()

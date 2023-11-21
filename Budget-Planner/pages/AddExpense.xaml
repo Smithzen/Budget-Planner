@@ -108,6 +108,7 @@
 
         <Border BackgroundColor="White"
                 Stroke="Black"
+                StrokeThickness="2"
                 Grid.Row="5"
                 Grid.Column="0"
                 Grid.ColumnSpan="3">
