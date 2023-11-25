@@ -1,3 +1,5 @@
+using Budget_Planner.BudgetPlanner;
+using Budget_Planner.BudgetPlanner.Data;
 using Microcharts;
 using SkiaSharp;
 
@@ -6,29 +8,20 @@ namespace Budget_Planner.pages;
 public partial class TodaysSpending : ContentPage
 {
 
-    ChartEntry[] entries = new[]
+    private List<ChartEntry> listChartData = new List<ChartEntry>();
+    private string[] chartColours = new string[]
     {
-        new ChartEntry(1)
-        {
-            Label = "one",
-            ValueLabel = "one",
-            Color = SKColor.Parse("#f3f115")
-        },
-        new ChartEntry(2)
-        {
-            Label = "two",
-            ValueLabel = "two",
-            Color = SKColor.Parse("#11f511")
-        },
-        new ChartEntry(3)
-        {
-            Label = "three",
-            ValueLabel = "three",
-            Color = SKColor.Parse("#d1ddfd")
-        }
+        "#472B7C",
+        "#427B9B",
+        "#369F95",
+        "#4AC06B",
+        "#9F2B0E",
+        "#D39D21"
     };
 
-	public TodaysSpending()
+
+
+    public TodaysSpending()
 	{
 		InitializeComponent();
 
@@ -36,9 +29,27 @@ public partial class TodaysSpending : ContentPage
 
         chartView.Chart = new DonutChart
         {
-            BackgroundColor = SKColor.Parse("#f3f3f3"),
-            Entries = entries
+            BackgroundColor = SKColor.Parse("#FFFFFF"),
+            Entries = listChartData,
+            LabelMode = LabelMode.RightOnly,
+            LabelTextSize = 40,
         };
+
+
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        listChartData = new List<ChartEntry>();
+        chartView.Chart = new DonutChart
+        {
+            BackgroundColor = SKColor.Parse("#FFFFFF"),
+            Entries = listChartData,
+            LabelMode = LabelMode.RightOnly,
+            LabelTextSize = 40,
+        };
+        GetTodaysExpenses();
 
     }
 
@@ -52,6 +63,82 @@ public partial class TodaysSpending : ContentPage
         //no back button so would only be useful if you don't want to go back to another page
         //await Shell.Current.GoToAsync("//AddExpense");
 
+    }
+
+    public void GetTodaysExpenses()
+    {
+
+        BPApplication bpApp = new BPApplication();
+        var result = bpApp.TodaysSpendingGetTodaysData();
+
+        var largestExpenseCategory = SetChartData(result);
+
+        largestSpendingCategoryValue.Text = largestExpenseCategory.ToString();
+        largestSpendingCategoryValue.TextColor = Color.FromHex("#000000");
+
+        SetTodaysTotalExpense(result);
+
+    }
+
+    public void SetTodaysTotalExpense(BPServerResult result)
+    {
+        double value = 0;
+
+        foreach (List<BPExpense> listExpenseCategory in result.ServerResultDataList)
+        {
+
+            //getting total value for all expenses in each category
+            foreach (BPExpense expense in listExpenseCategory)
+            {
+
+                value = value + expense.ExpenseAmount;
+            }
+
+        }
+
+        labelSpentToday.Text = value.ToString("C");
+    }
+
+    public string SetChartData(BPServerResult result)
+    {
+        double largestExpense = 0;
+        string largestExpenseCategory = string.Empty;
+
+        var i = 0;
+        foreach (List<BPExpense> listExpenseCategory in result.ServerResultDataList)
+        {
+            float value = 0;
+            string label = string.Empty;
+
+            //getting total value for all expenses in each category
+            foreach (BPExpense expense in listExpenseCategory)
+            {
+                if (string.IsNullOrEmpty(label))
+                {
+                    label = expense.ExpenseCategory.CategoryName;
+                }
+
+                value = value + (float)expense.ExpenseAmount;
+            }
+
+            //getting the largest spending category from the lists
+            if (value > largestExpense)
+            {
+                largestExpense = value;
+                largestExpenseCategory = label;
+            }
+
+            //creating chart data
+            listChartData.Add(new ChartEntry(value)
+            {
+                Label = label,
+                Color = SKColor.Parse(chartColours[i])
+            });
+
+            i++;
+        }
+
+        return largestExpenseCategory;
     }
 
 }

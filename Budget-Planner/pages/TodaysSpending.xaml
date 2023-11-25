@@ -4,18 +4,61 @@
              xmlns:micro="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Budget_Planner.pages.TodaysSpending">
 
-    <Grid Padding="0, 10 , 10, 0"
-          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+    <Grid Padding="20, 10 , 10, 0"
+          RowDefinitions="Auto, Auto, Auto, *, *, Auto, *, Auto, 30"
           RowSpacing="15"
           ColumnSpacing="2"
           ColumnDefinitions="auto, auto, *, auto"
           BackgroundColor="White">
 
-        <Label x:Name="CurrentDateTime" FontSize="Large" VerticalTextAlignment="Center" Padding="20,0,0,0" Grid.Row="0" Grid.Column="0" TextColor="Black"/>
+        <!--Curent date-->
+        <Label x:Name="CurrentDateTime" FontSize="30" VerticalTextAlignment="Center" Grid.Row="0" Grid.Column="0" TextColor="Black"/>
+        <!--add expense button-->
         <Button x:Name="addExpense" FontSize="Large" Text="+" WidthRequest="50"  HorizontalOptions="End" Grid.Row="0" Grid.Column="3"
                 Clicked="AddExpense"/>
 
-        <micro:ChartView x:Name="chartView" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4"  HeightRequest="400"/>
+        
+        <!--label with the total amount spent today-->
+        <Label x:Name="labelSpentToday"
+               Text="£0.00"
+               TextColor="Black"
+               FontSize="55"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Center"
+               Grid.Row="2"
+               Grid.RowSpan="2"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"/>
+        
+        <!--largest spending category today-->
+        <Label x:Name="labelLargestSpendingCategory"
+               Text="Highest Expense Category"
+               TextColor="Black"
+               FontSize="25"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Center"
+               Grid.Row="5"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"/>
+
+
+        <Label x:Name="largestSpendingCategoryValue"
+               Text="No expenses today"
+               TextColor="Grey"
+               IsVisible="true"
+               FontSize="Medium"
+               VerticalTextAlignment="Center"
+               Grid.Row="6"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"
+               HorizontalTextAlignment="Center"/>
+
+        <!--todays spending donut chart-->
+        <micro:ChartView x:Name="chartView"
+                         Grid.Row="7" 
+                         Grid.Column="0" 
+                         Grid.ColumnSpan="4"
+                         HeightRequest="210"/>
 
 
     </Grid>

@@ -11,7 +11,7 @@ namespace Budget_Planner.pages;
 public partial class AddExpense : ContentPage
 {
     public List<BPCategory> listCategories { get; set; } = new List<BPCategory>();
-
+    private ContentPage previousPage { get; set; } = new ContentPage();
     public AddExpense()
 	{
         InitializeComponent();
