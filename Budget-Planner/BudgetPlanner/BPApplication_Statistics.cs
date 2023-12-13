@@ -73,7 +73,7 @@ namespace Budget_Planner.BudgetPlanner
             catch (Exception ex)
             {
                 result.ServerResult = false;
-                result.ServerResultMessage = "GetLineChartData Ex: " + ex.Message;
+                result.ServerResultMessage = "GetBarChartData Ex: " + ex.Message;
             }
             finally
             {
@@ -90,25 +90,59 @@ namespace Budget_Planner.BudgetPlanner
 
             BPServerResult result = new BPServerResult();
 
-
-            List<BPExpense> listExpenses = new List<BPExpense>();
-            List<DateTime> listExpenseDates = new List<DateTime>();
+            List<List<BPExpense>> listExpensesByDay = new List<List<BPExpense>>();
 
 
             MySqlConnection DBConRO = new MySqlConnection(builder.ConnectionString);
             try
             {
+                DBConRO.Open();
 
+                MySqlCommand cmd;
+                MySqlDataReader reader;
 
+                DateTime earliestSearchDate = GetSearchDate(selectedIndex);
+                DateTime searchDate = DateTime.Now.Date;
+
+                while (searchDate >= earliestSearchDate.Date)
+                {
+                    List<BPExpense> listExpenses = new List<BPExpense>();
+
+                    cmd = new MySqlCommand("SELECT ExpenseAmount FROM expenses WHERE ExpenseDate=@ExpenseDate AND UserGUID=@UserGUID", DBConRO);
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@ExpenseDate", MySqlDbType = MySqlDbType.DateTime, Value = searchDate });
+                    cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserGUID", MySqlDbType = MySqlDbType.VarChar, Value = UserGUID });
+                    reader = cmd.ExecuteReader();
+
+                    while(reader.Read())
+                    {
+                        listExpenses.Add(new BPExpense()
+                        {
+                            ExpenseAmount = Convert.ToDouble(reader["ExpenseAmount"]),
+                            ExpenseDate = searchDate,
+                        });
+                    }
+                    reader.Close();
+                    reader.Dispose();
+
+                    listExpensesByDay.Add(listExpenses);
+
+                    searchDate.AddDays(-1);
+                }
+
+                result.ServerResult = true;
+                result.ServerResultMessage = "Expense data successfully retrieved";
+                result.ServerResultDataList = listExpensesByDay;
 
             }
             catch (Exception ex)
             {
-
+                result.ServerResult = false;
+                result.ServerResultMessage = "GetLineChartData Ex: " + ex.Message;
             }
             finally
             {
-
+                DBConRO.Close();
+                DBConRO.Dispose();
             }
             return result;
         }

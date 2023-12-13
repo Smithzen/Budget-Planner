@@ -4,6 +4,7 @@ using SkiaSharp;
 using System.Security.Cryptography.X509Certificates;
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
+using ModelIO;
 
 namespace Budget_Planner.pages;
 
@@ -11,6 +12,7 @@ public partial class Statistics : ContentPage
 {
 
     public List<ChartEntry> listBarChartData = new List<ChartEntry>();
+    public List<ChartEntry> listLineChartData = new List<ChartEntry>();
 
 	public Statistics()
 	{
@@ -28,20 +30,39 @@ public partial class Statistics : ContentPage
 
         pickerDateFilter.SelectedIndex = 0;
 
-
-
-        barChart.Chart = new BarChart
+        if (listBarChartData.Count > 0 )
         {
-            BackgroundColor = SKColor.Parse("#FFFFFF"),
-            Entries = listBarChartData,
-            LabelOrientation = Orientation.Horizontal,
-            YAxisPosition = Position.Left,
-            ShowYAxisText = true,
-            ShowYAxisLines = true,
-            ValueLabelOrientation = Orientation.Horizontal,
-            ValueLabelTextSize = 20,
-            LabelTextSize = 35,
-        };
+            barChart.Chart = new BarChart
+            {
+                BackgroundColor = SKColor.Parse("#FFFFFF"),
+                Entries = listBarChartData,
+                LabelOrientation = Orientation.Horizontal,
+                YAxisPosition = Position.Left,
+                ShowYAxisText = true,
+                ShowYAxisLines = true,
+                ValueLabelOrientation = Orientation.Horizontal,
+                ValueLabelTextSize = 20,
+                LabelTextSize = 35,
+            };
+        }
+
+        if (listLineChartData.Count > 0 )
+        {
+            lineChart.Chart = new LineChart
+            {
+                BackgroundColor = SKColor.Parse("#FFFFFF"),
+                Entries = listLineChartData,
+                LabelOrientation = Orientation.Horizontal,
+                YAxisPosition = Position.Left,,
+                ShowYAxisText = true,
+                ShowYAxisLines = true,
+                ValueLabelOrientation = Orientation.Horizontal,
+                ValueLabelTextSize = 20,
+                LabelTextSize = 35,
+            };
+        }
+
+
 
     }
 
@@ -86,6 +107,12 @@ public partial class Statistics : ContentPage
             });
         }
 
+    }
+
+    private void getLineChartData()
+    {
+        BPApplication bpApp = new BPApplication();
+        BPServerResult result = bpApp.GetLineChartData(pickerDateFilter.SelectedIndex);
     }
 
 
