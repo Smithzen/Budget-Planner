@@ -4,7 +4,7 @@ using SkiaSharp;
 using System.Security.Cryptography.X509Certificates;
 using Budget_Planner.BudgetPlanner;
 using Budget_Planner.BudgetPlanner.Data;
-using ModelIO;
+using System.Collections.Generic;
 
 namespace Budget_Planner.pages;
 
@@ -25,12 +25,21 @@ public partial class Statistics : ContentPage
     {
         base.OnAppearing();
 
-        listBarChartData = new List<ChartEntry>();
-
-
         pickerDateFilter.SelectedIndex = 0;
 
-        if (listBarChartData.Count > 0 )
+    }
+
+    private void pickerSelectedIndexChanged(object sender, EventArgs e)
+    {
+
+        listBarChartData = new List<ChartEntry>();
+        listLineChartData = new List<ChartEntry>();
+
+        getBarChartData();
+        getLineChartData();
+
+
+        if (listBarChartData.Count > 0)
         {
             barChart.Chart = new BarChart
             {
@@ -46,30 +55,21 @@ public partial class Statistics : ContentPage
             };
         }
 
-        if (listLineChartData.Count > 0 )
+
+        if (listLineChartData.Count > 0)
         {
             lineChart.Chart = new LineChart
             {
                 BackgroundColor = SKColor.Parse("#FFFFFF"),
                 Entries = listLineChartData,
                 LabelOrientation = Orientation.Horizontal,
-                YAxisPosition = Position.Left,,
+                YAxisPosition = Position.Left,
                 ShowYAxisText = true,
                 ShowYAxisLines = true,
-                ValueLabelOrientation = Orientation.Horizontal,
-                ValueLabelTextSize = 20,
+                LineMode = LineMode.Straight,
                 LabelTextSize = 35,
             };
         }
-
-
-
-    }
-
-    private void pickerSelectedIndexChanged(object sender, EventArgs e)
-    {
-
-        getBarChartData();
 
     }
 
@@ -113,6 +113,40 @@ public partial class Statistics : ContentPage
     {
         BPApplication bpApp = new BPApplication();
         BPServerResult result = bpApp.GetLineChartData(pickerDateFilter.SelectedIndex);
+
+        List<List<BPExpense>> reverseList = (List<List<BPExpense>>)result.ServerResultDataList;
+        reverseList.Reverse();
+
+        foreach (List<BPExpense> listDailyExpense in reverseList)
+        {
+            float value = 0;
+            string label = string.Empty;
+
+            //checking if date has any expenses
+            if (listDailyExpense.Count > 0)
+            {
+                //getting total spent for each date
+                foreach (BPExpense expense in listDailyExpense)
+                {
+                    value = value + (float)expense.ExpenseAmount;
+                }
+            }
+            else
+            {
+                value = 0;
+            }
+
+
+            var random = new Random();
+            var color = String.Format("#{0:X6}", random.Next(0x1000000)); // = "#A197B9"
+
+            //setting line chart data
+            listLineChartData.Add(new ChartEntry(value)
+            {
+                Color = SKColor.Parse(color)
+            });
+
+        }
     }
 
 

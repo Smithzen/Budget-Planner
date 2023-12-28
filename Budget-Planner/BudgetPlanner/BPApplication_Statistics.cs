@@ -104,7 +104,7 @@ namespace Budget_Planner.BudgetPlanner
                 DateTime earliestSearchDate = GetSearchDate(selectedIndex);
                 DateTime searchDate = DateTime.Now.Date;
 
-                while (searchDate >= earliestSearchDate.Date)
+                while (searchDate > earliestSearchDate.Date)
                 {
                     List<BPExpense> listExpenses = new List<BPExpense>();
 
@@ -126,7 +126,7 @@ namespace Budget_Planner.BudgetPlanner
 
                     listExpensesByDay.Add(listExpenses);
 
-                    searchDate.AddDays(-1);
+                    searchDate = searchDate.AddDays(-1);
                 }
 
                 result.ServerResult = true;
@@ -160,10 +160,6 @@ namespace Budget_Planner.BudgetPlanner
 
                 case 1:
                     searchDate = DateTime.Now.AddDays(-30);
-                    break;
-
-                case 2:
-                    searchDate = DateTime.MinValue;
                     break;
 
                 default:

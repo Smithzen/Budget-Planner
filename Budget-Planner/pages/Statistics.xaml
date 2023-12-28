@@ -23,7 +23,6 @@
                 <x:Array Type="{x:Type x:String}">
                     <x:String>Last 7 Days</x:String>
                     <x:String>Last 30 Days</x:String>
-                    <x:String>All Time</x:String>
                 </x:Array>
             </Picker.ItemsSource>
             
