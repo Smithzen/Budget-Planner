@@ -13,6 +13,8 @@ public partial class Statistics : ContentPage
 
     public List<ChartEntry> listBarChartData = new List<ChartEntry>();
     public List<ChartEntry> listLineChartData = new List<ChartEntry>();
+    public string totalSpentData = string.Empty;
+
 
 	public Statistics()
 	{
@@ -28,15 +30,16 @@ public partial class Statistics : ContentPage
         pickerDateFilter.SelectedIndex = 0;
 
     }
-
     private void pickerSelectedIndexChanged(object sender, EventArgs e)
     {
 
         listBarChartData = new List<ChartEntry>();
         listLineChartData = new List<ChartEntry>();
+        totalSpentData = string.Empty;
 
         getBarChartData();
         getLineChartData();
+        getTotalSpent();
 
 
         if (listBarChartData.Count > 0)
@@ -72,7 +75,6 @@ public partial class Statistics : ContentPage
         }
 
     }
-
     private void getBarChartData()
     {
         BPApplication bpApp = new BPApplication();
@@ -107,8 +109,7 @@ public partial class Statistics : ContentPage
             });
         }
 
-    }
-
+    } //gets a list of data of amount spent by category
     private void getLineChartData()
     {
         BPApplication bpApp = new BPApplication();
@@ -147,7 +148,15 @@ public partial class Statistics : ContentPage
             });
 
         }
-    }
+    }//gets a list of data for each day in the time period
+    private void getTotalSpent()
+    {
+        BPApplication bpApp = new BPApplication();
+        BPServerResult result = bpApp.GetTotalSpent(pickerDateFilter.SelectedIndex);
 
+        totalSpentData = Convert.ToDouble(result.ServerResultDataObject).ToString("C");
+        labelTotalSpentValue.Text = totalSpentData;
+
+    }//gets the total spent for the time period
 
 }

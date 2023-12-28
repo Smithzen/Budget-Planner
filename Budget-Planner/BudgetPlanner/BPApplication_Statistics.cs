@@ -83,8 +83,6 @@ namespace Budget_Planner.BudgetPlanner
 
             return result;
         }
-
-
         public BPServerResult GetLineChartData(int selectedIndex)
         {
 
@@ -146,7 +144,55 @@ namespace Budget_Planner.BudgetPlanner
             }
             return result;
         }
+        public BPServerResult GetTotalSpent(int selectedIndex)
+        {
+            BPServerResult result = new BPServerResult();
 
+            float totalSpent = 0;
+
+            MySqlConnection DBconRO = new MySqlConnection(builder.ConnectionString);
+            try 
+            {
+
+                DBconRO.Open();
+
+                MySqlCommand cmd;
+                MySqlDataReader reader;
+
+                DateTime earliestSearchDate = GetSearchDate(selectedIndex);
+
+
+                cmd = new MySqlCommand("SELECT ExpenseAmount FROM expenses WHERE ExpenseDate>@ExpenseDate AND UserGUID=@UserGUID", DBconRO);
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@ExpenseDate", MySqlDbType = MySqlDbType.DateTime, Value = earliestSearchDate });
+                cmd.Parameters.Add(new MySqlParameter() { ParameterName = "@UserGUID", MySqlDbType = MySqlDbType.VarChar, Value = UserGUID });
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    totalSpent = totalSpent + (float)Convert.ToDouble(reader["ExpenseAmount"]);
+                }
+                reader.Close();
+                reader.Dispose();
+
+                result.ServerResult = true;
+                result.ServerResultMessage = "Successfully retrieved expense data";
+                result.ServerResultDataObject = totalSpent;
+
+            }
+            catch (Exception ex)
+            {
+                result.ServerResult = false;
+                result.ServerResultMessage = "GetTotalspent" + ex.Message;
+            }
+            finally
+            {
+                DBconRO.Close();
+                DBconRO.Dispose();
+            }
+            return result;
+
+
+        }
 
         private static DateTime GetSearchDate(int selectedIndex)
         {
@@ -160,6 +206,10 @@ namespace Budget_Planner.BudgetPlanner
 
                 case 1:
                     searchDate = DateTime.Now.AddDays(-30);
+                    break;
+
+                case 2:
+                    searchDate = DateTime.Now.AddDays(-90);
                     break;
 
                 default:

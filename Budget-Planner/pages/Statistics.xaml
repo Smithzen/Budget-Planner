@@ -6,7 +6,7 @@
              Title="Statistics">
 
     <Grid Padding="20, 10 , 10, 0"
-          RowDefinitions="Auto, Auto, Auto, *, *, Auto, *, Auto, 30"
+          RowDefinitions="Auto, Auto, Auto, Auto, *, Auto, *, Auto, 30"
           RowSpacing="15"
           ColumnSpacing="2"
           ColumnDefinitions="auto, auto, *, auto"
@@ -23,6 +23,7 @@
                 <x:Array Type="{x:Type x:String}">
                     <x:String>Last 7 Days</x:String>
                     <x:String>Last 30 Days</x:String>
+                    <x:String>Last 90 Days</x:String>
                 </x:Array>
             </Picker.ItemsSource>
             
@@ -43,11 +44,21 @@
                          HeightRequest="200"/>
 
 
-        <micro:ChartView x:Name="Chart"
-                         Grid.Row="1" 
-                         Grid.Column="0" 
-                         Grid.ColumnSpan="4"
-                         HeightRequest="200"/>
+        <Label x:Name="labelTotalSpent"
+               Grid.Row="3"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"
+               Text="Total Spent"
+               TextColor="Black"
+               FontSize="23"/>
+
+        <Label x:Name="labelTotalSpentValue"
+               Grid.Row="4"
+               Grid.Column="2"
+               Grid.ColumnSpan="4"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               FontSize="30"/>
 
 
     </Grid>
